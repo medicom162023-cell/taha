@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 interface Post {
@@ -25,14 +25,13 @@ export default function LatestNews() {
     async function fetchNews() {
       try {
         const res = await fetch('/api/news');
-        if (!res.ok) {
-          throw new Error('فشل جلب الأخبار من الخادم');
-        }
-        const data = await res.json();
+        if (!res.ok) throw new Error('فشل جلب الأخبار من الخادم');
+        const data: Post[] = await res.json();
         setPosts(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'حدث خطأ غير متوقع';
         console.error('Error fetching news:', err);
-        setError(err.message);
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -42,81 +41,85 @@ export default function LatestNews() {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-16 text-[#003358] font-[Alexandria]">جاري تحميل أحدث الأخبار...</div>;
+    return (
+      <section className="bg-[#f7faf9] px-5 py-16 text-center font-[Alexandria] text-[#003358] md:py-20">
+        جاري تحميل أحدث الأخبار...
+      </section>
+    );
   }
 
   if (error) {
-    return <div className="text-center py-16 text-red-500 font-[Alexandria]">حدث خطأ أثناء تحميل الأخبار: {error}</div>;
+    return (
+      <section className="bg-[#f7faf9] px-5 py-16 text-center font-[Alexandria] text-red-600 md:py-20">
+        حدث خطأ أثناء تحميل الأخبار: {error}
+      </section>
+    );
   }
 
-  if (!posts || posts.length === 0) {
-    return null;
-  }
+  if (posts.length === 0) return null;
 
   return (
-    <section className="py-24 bg-gray-50 font-[Alexandria]">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* عنوان القسم مع مسافة مريحة للعين */}
-        <div className="text-center mb-16">
-          <span className="inline-block bg-[#51c698]/10 text-[#51c698] text-sm font-semibold px-4 py-1.5 rounded-full mb-3 border border-[#51c698]/20">
-            آخر المستجدات
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#003358]">أخبار الجمعية</h2>
+    <section className="bg-[#f7faf9] py-16 font-[Alexandria] md:py-20 lg:py-24">
+      <div className="mx-auto max-w-[1180px] px-5 md:px-8">
+        <div className="mb-10 text-center md:mb-12">
+          <span className="mb-2 block text-sm font-semibold text-[#51c698]">آخر المستجدات</span>
+          <h2 className="text-3xl font-extrabold text-[#003358] md:text-4xl">أخبار الجمعية</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-gray-500 md:text-base">
+            تابع أحدث أنشطة الجمعية وبرامجها الإنسانية والتنموية في الميدان.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
           {posts.map((post) => {
-            const featuredImage = 
-              post._embedded?.['wp:featuredmedia']?.[0]?.source_url || 
-              '/hero-bg.jpg';
+            const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/hero-bg.jpg';
 
             return (
-              <div 
-                key={post.id} 
-                className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col justify-between border border-gray-100 hover:shadow-xl transition-all duration-300 group"
+              <article
+                key={post.id}
+                className="group flex min-h-full flex-col overflow-hidden rounded-2xl border border-[#e9f1ee] bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
-                <div className="relative w-full h-52 overflow-hidden bg-gray-200">
+                <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-56">
                   <img
                     src={featuredImage}
-                    alt={post.title.rendered}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    alt={post.title.rendered.replace(/<[^>]+>/g, '')}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute top-4 right-4 bg-[#51c698] text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+                  <span className="absolute right-4 top-4 rounded-lg bg-[#51c698] px-3 py-1 text-xs font-bold text-white shadow-sm">
                     جديد
-                  </div>
+                  </span>
                 </div>
 
-                <div className="p-6 flex flex-col flex-grow">
-                  <span className="text-xs text-gray-400 mb-2">
+                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                  <time className="mb-2 text-xs text-gray-400" dateTime={post.date}>
                     {new Date(post.date).toLocaleDateString('ar-SA', {
                       year: 'numeric',
                       month: 'long',
-                      day: 'numeric'
+                      day: 'numeric',
                     })}
-                  </span>
-                  
-                  <h3 
-                    className="text-lg font-bold text-[#003358] mb-3 line-clamp-2 group-hover:text-[#51c698] transition-colors"
+                  </time>
+
+                  <h3
+                    className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#003358] transition-colors group-hover:text-[#45b287]"
                     dangerouslySetInnerHTML={{ __html: post.title.rendered }}
                   />
-                  
-                  <div 
-                    className="text-gray-600 text-xs md:text-sm line-clamp-3 mb-6 leading-relaxed"
+
+                  <div
+                    className="mb-5 line-clamp-3 flex-1 text-sm leading-7 text-gray-600"
                     dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
                   />
-                </div>
 
-                <div className="px-6 pb-6 pt-0">
                   <Link
                     href={`https://aard.ps/${post.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-[#51c698] font-semibold text-sm hover:text-[#45b287] transition-colors"
+                    className="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#45b287] transition hover:text-[#00406d]"
                   >
-                    اقرأ التفاصيل &larr;
+                    اقرأ التفاصيل
+                    <span aria-hidden="true">←</span>
                   </Link>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
