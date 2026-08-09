@@ -17,12 +17,10 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm font-[Alexandria] w-full">
-      <div className="container mx-auto px-4 md:px-12 py-3 flex items-center justify-between">
-        
-        {/* 1. الجانب الأيمن: الشعار الكامل المتكامل */}
-        <Link href="/" className="flex items-center">
-          <div className="w-[200px] md:w-[240px] h-12 relative">
+    <header className="sticky top-0 z-50 w-full border-b border-[#edf2f4] bg-white font-[Alexandria]">
+      <div className="mx-auto flex h-[78px] w-full max-w-[1366px] items-center justify-between px-5 md:px-10 lg:px-[84px]">
+        <Link href="/" className="flex shrink-0 items-center" aria-label="الصفحة الرئيسية">
+          <div className="relative h-[48px] w-[190px] md:w-[220px]">
             <Image
               src="/full-logo.svg"
               alt="جمعية التحالف للإغاثة والتنمية"
@@ -33,35 +31,33 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* 2. الجانب الأوسط: روابط التنقل للشاشات الكبيرة */}
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-gray-700">
-          {navLinks.map((link) => (
+        <nav className="hidden items-center gap-8 text-[14px] font-medium text-[#25364a] lg:flex">
+          {navLinks.map((link, index) => (
             <Link
               key={link.name}
               href={link.href}
-              className="hover:text-[#51c698] transition-colors"
+              className={`transition-colors hover:text-[#45bd91] ${index === 0 ? 'text-[#45bd91]' : ''}`}
             >
               {link.name}
             </Link>
           ))}
         </nav>
 
-        {/* 3. الجانب الأيسر: زر تبرع الآن وزر القائمة للموبايل */}
         <div className="flex items-center gap-3">
           <Link
             href="/donate"
-            className="hidden sm:inline-flex bg-[#51c698] hover:bg-[#45b287] text-white text-xs md:text-sm font-semibold px-5 py-2.5 rounded-lg transition-all shadow-sm"
+            className="hidden min-w-[112px] items-center justify-center rounded-[7px] bg-[#45bd91] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#37aa80] sm:inline-flex"
           >
             تبرع الآن
           </Link>
 
-          {/* زر قائمة الجوال */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle Menu"
-            className="lg:hidden text-[#00406d] focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="فتح القائمة"
+            aria-expanded={isOpen}
+            className="rounded-lg p-2 text-[#00406d] transition-colors hover:bg-gray-100 focus:outline-none lg:hidden"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -70,34 +66,32 @@ export default function Header() {
             </svg>
           </button>
         </div>
-
       </div>
 
-      {/* قائمة الجوال المنسدلة */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-t border-gray-100 shadow-xl overflow-hidden"
+            className="overflow-hidden border-t border-gray-100 bg-white shadow-xl lg:hidden"
           >
-            <div className="flex flex-col px-6 py-5 space-y-3">
+            <div className="flex flex-col px-6 py-5">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-gray-700 hover:text-[#51c698] font-medium text-base py-2 border-b border-gray-50 last:border-none text-right"
+                  className="border-b border-gray-50 py-3 text-right text-base font-medium text-gray-700 transition-colors last:border-none hover:text-[#45bd91]"
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-2 sm:hidden">
+              <div className="pt-4 sm:hidden">
                 <Link
                   href="/donate"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full text-center bg-[#51c698] text-white font-semibold py-3 rounded-lg shadow-sm"
+                  className="block w-full rounded-lg bg-[#45bd91] py-3 text-center font-semibold text-white"
                 >
                   تبرع الآن
                 </Link>
