@@ -1,5 +1,6 @@
 import './globals.css';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'جمعية التحالف للإغاثة والتنمية',
@@ -16,6 +17,7 @@ export default function RootLayout({
       <body className="font-[Alexandria] antialiased bg-white">
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
