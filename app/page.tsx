@@ -4,6 +4,7 @@ import ProjectsSection from "@/components/ProjectsSection";
 import CommunityImpact from "@/components/CommunityImpact";
 import DonationBanner from "@/components/DonationBanner";
 import LatestNews from "@/components/LatestNews";
+import PartnersSection from "@/components/PartnersSection";
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <CommunityImpact />
       <DonationBanner />
       <LatestNews />
+      <PartnersSection />
     </main>
   );
 }
