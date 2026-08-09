@@ -3,6 +3,7 @@ import AboutAndStats from "@/components/AboutAndStats";
 import ProjectsSection from "@/components/ProjectsSection";
 import CommunityImpact from "@/components/CommunityImpact";
 import DonationBanner from "@/components/DonationBanner";
+import LatestNews from "@/components/LatestNews";
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       <ProjectsSection />
       <CommunityImpact />
       <DonationBanner />
+      <LatestNews />
     </main>
   );
 }
