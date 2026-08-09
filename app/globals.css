@@ -1,8 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+:root {
+  --brand-navy: #00406d;
+  --brand-navy-dark: #003358;
+  --brand-green: #51c698;
+  --brand-green-dark: #45b287;
+}
+
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
   body {
+    margin: 0;
+    min-width: 320px;
+    overflow-x: hidden;
+    background: #ffffff;
+    color: #1f2937;
     font-family: 'Alexandria', sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: rgba(81, 198, 152, 0.28);
+    color: var(--brand-navy-dark);
   }
 }
