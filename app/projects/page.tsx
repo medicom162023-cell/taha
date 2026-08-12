@@ -28,7 +28,7 @@ export default async function ProjectsPage() {
                   <div className="p-6">
                     <h2 className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#00406d]">{post.title}</h2>
                     <p className="mb-5 line-clamp-3 text-sm leading-7 text-slate-600">{post.excerpt}</p>
-                    <Link href={post.link} target="_blank" rel="noreferrer" className="text-sm font-bold text-[#45bd91] hover:text-[#00406d]">
+                    <Link href={`/projects/${post.slug}`} className="text-sm font-bold text-[#45bd91] hover:text-[#00406d]">
                       تفاصيل المشروع ←
                     </Link>
                   </div>
