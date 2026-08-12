@@ -5,15 +5,11 @@ import Link from 'next/link';
 
 interface Post {
   id: number;
-  title: { rendered: string };
-  excerpt: { rendered: string };
+  title: string;
+  excerpt: string;
   slug: string;
   date: string;
-  _embedded?: {
-    'wp:featuredmedia'?: Array<{
-      source_url: string;
-    }>;
-  };
+  featured_image: string | null;
 }
 
 export default function LatestNews() {
@@ -71,7 +67,7 @@ export default function LatestNews() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
           {posts.map((post) => {
-            const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/hero-bg.jpg';
+            const featuredImage = post.featured_image || '/hero-bg.jpg';
 
             return (
               <article
@@ -81,7 +77,7 @@ export default function LatestNews() {
                 <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-56">
                   <img
                     src={featuredImage}
-                    alt={post.title.rendered.replace(/<[^>]+>/g, '')}
+                    alt={post.title}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -99,20 +95,16 @@ export default function LatestNews() {
                     })}
                   </time>
 
-                  <h3
-                    className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#003358] transition-colors group-hover:text-[#45b287]"
-                    dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                  />
+                  <h3 className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#003358] transition-colors group-hover:text-[#45b287]">
+                    {post.title}
+                  </h3>
 
-                  <div
-                    className="mb-5 line-clamp-3 flex-1 text-sm leading-7 text-gray-600"
-                    dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-                  />
+                  <p className="mb-5 line-clamp-3 flex-1 text-sm leading-7 text-gray-600">
+                    {post.excerpt}
+                  </p>
 
                   <Link
-                    href={`https://aard.ps/${post.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/media/${post.slug}`}
                     className="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#45b287] transition hover:text-[#00406d]"
                   >
                     اقرأ التفاصيل
