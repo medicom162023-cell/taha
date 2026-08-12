@@ -31,7 +31,7 @@ export default async function ContactPage() {
 
           <div className="rounded-2xl bg-white p-7 shadow-sm md:p-9">
             {page ? (
-              <WpContent html={page.content.rendered} />
+              <WpContent html={page.content} />
             ) : (
               <div className="text-center text-slate-600">تعذر تحميل صفحة التواصل من WordPress حالياً.</div>
             )}

@@ -21,7 +21,7 @@ export async function GET() {
       );
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as { items?: unknown[] };
 
     return NextResponse.json(data.items ?? [], {
       headers: {
