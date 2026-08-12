@@ -76,11 +76,17 @@ export async function getProjects(perPage = 12) {
 }
 
 export async function getNewsBySlug(slug: string) {
-  const posts = await getLatestPosts(20);
-  return posts.find((post) => post.slug === slug) ?? null;
+  try {
+    return await aardFetch<AardContentItem>(`/news/${encodeURIComponent(slug)}`);
+  } catch {
+    return null;
+  }
 }
 
 export async function getProjectBySlug(slug: string) {
-  const projects = await getProjects(30);
-  return projects.find((project) => project.slug === slug) ?? null;
+  try {
+    return await aardFetch<AardContentItem>(`/projects/${encodeURIComponent(slug)}`);
+  } catch {
+    return null;
+  }
 }
