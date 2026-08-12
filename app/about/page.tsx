@@ -21,7 +21,7 @@ export default async function AboutPage() {
       <section className="py-14 md:py-20">
         <div className="mx-auto max-w-[900px] px-5 md:px-8">
           {page ? (
-            <WpContent html={page.content.rendered} />
+            <WpContent html={page.content} />
           ) : (
             <div className="rounded-2xl bg-[#f7faf9] p-8 text-center text-slate-600">
               تعذر تحميل محتوى صفحة من نحن من WordPress حالياً.
