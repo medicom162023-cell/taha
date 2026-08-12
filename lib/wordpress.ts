@@ -74,3 +74,13 @@ export async function getProjects(perPage = 12) {
   const data = await aardFetch<AardCollection>(`/projects?per_page=${perPage}`);
   return data.items;
 }
+
+export async function getNewsBySlug(slug: string) {
+  const posts = await getLatestPosts(20);
+  return posts.find((post) => post.slug === slug) ?? null;
+}
+
+export async function getProjectBySlug(slug: string) {
+  const projects = await getProjects(30);
+  return projects.find((project) => project.slug === slug) ?? null;
+}
