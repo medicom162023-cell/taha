@@ -1,56 +1,76 @@
 export const WORDPRESS_BASE_URL = 'https://aard.ps';
-export const WORDPRESS_API_URL = `${WORDPRESS_BASE_URL}/wp-json/wp/v2`;
+export const AARD_API_URL = `${WORDPRESS_BASE_URL}/wp-json/aard/v1`;
 
-export interface WordPressPage {
+export interface AardCategory {
   id: number;
+  name: string;
   slug: string;
-  link: string;
-  title: { rendered: string };
-  content: { rendered: string };
-  excerpt?: { rendered: string };
-  featured_media?: number;
 }
 
-export interface WordPressPost {
+export interface AardContentItem {
   id: number;
   slug: string;
-  link: string;
+  title: string;
+  excerpt: string;
+  content: string;
   date: string;
-  title: { rendered: string };
-  excerpt: { rendered: string };
-  content: { rendered: string };
-  _embedded?: {
-    'wp:featuredmedia'?: Array<{
-      source_url: string;
-      alt_text?: string;
-    }>;
-  };
+  modified: string;
+  link: string;
+  featured_image: string | null;
+  categories: AardCategory[];
 }
 
-async function wpFetch<T>(path: string): Promise<T> {
-  const response = await fetch(`${WORDPRESS_API_URL}${path}`, {
+export interface AardCollection {
+  items: AardContentItem[];
+  count: number;
+  source_post_type?: string;
+}
+
+export interface AardHome {
+  site: {
+    name: string;
+    description: string;
+    url: string;
+    language: string;
+  };
+  about: AardContentItem | null;
+  contact: AardContentItem | null;
+  news: AardContentItem[];
+  projects: AardContentItem[];
+  generated_at: string;
+}
+
+async function aardFetch<T>(path: string): Promise<T> {
+  const response = await fetch(`${AARD_API_URL}${path}`, {
     next: { revalidate: 300 },
     headers: { Accept: 'application/json' },
   });
 
   if (!response.ok) {
-    throw new Error(`WordPress request failed: ${response.status}`);
+    throw new Error(`AARD API request failed: ${response.status}`);
   }
 
   return response.json() as Promise<T>;
 }
 
+export async function getHomeData() {
+  return aardFetch<AardHome>('/home');
+}
+
 export async function getPageBySlug(slug: string) {
-  const pages = await wpFetch<WordPressPage[]>(`/pages?slug=${encodeURIComponent(slug)}&_embed`);
-  return pages[0] ?? null;
+  try {
+    return await aardFetch<AardContentItem>(`/pages/${encodeURIComponent(slug)}`);
+  } catch {
+    return null;
+  }
 }
 
 export async function getLatestPosts(perPage = 9) {
-  return wpFetch<WordPressPost[]>(`/posts?per_page=${perPage}&_embed`);
+  const data = await aardFetch<AardCollection>(`/news?per_page=${perPage}`);
+  return data.items;
 }
 
-export async function searchPosts(search: string, perPage = 12) {
-  return wpFetch<WordPressPost[]>(
-    `/posts?search=${encodeURIComponent(search)}&per_page=${perPage}&_embed`,
-  );
+export async function getProjects(perPage = 12) {
+  const data = await aardFetch<AardCollection>(`/projects?per_page=${perPage}`);
+  return data.items;
 }
