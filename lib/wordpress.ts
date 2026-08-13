@@ -53,13 +53,25 @@ async function aardFetch<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+function normalizeSlug(value: string) {
+  let decoded = value;
+
+  try {
+    decoded = decodeURIComponent(value);
+  } catch {
+    // Keep the original value when it is not URI-encoded.
+  }
+
+  return decoded.normalize('NFC').replace(/^\/+|\/+$/g, '');
+}
+
 export async function getHomeData() {
   return aardFetch<AardHome>('/home');
 }
 
 export async function getPageBySlug(slug: string) {
   try {
-    return await aardFetch<AardContentItem>(`/pages/${encodeURIComponent(slug)}`);
+    return await aardFetch<AardContentItem>(`/pages/${encodeURIComponent(normalizeSlug(slug))}`);
   } catch {
     return null;
   }
@@ -76,17 +88,34 @@ export async function getProjects(perPage = 12) {
 }
 
 export async function getNewsBySlug(slug: string) {
+  const normalizedSlug = normalizeSlug(slug);
+
   try {
-    return await aardFetch<AardContentItem>(`/news/${encodeURIComponent(slug)}`);
+    return await aardFetch<AardContentItem>(`/news/${encodeURIComponent(normalizedSlug)}`);
   } catch {
-    return null;
+    try {
+      const data = await aardFetch<AardCollection>('/news?per_page=100');
+      return data.items.find((item) => normalizeSlug(item.slug) === normalizedSlug) ?? null;
+    } catch {
+      return null;
+    }
   }
 }
 
 export async function getProjectBySlug(slug: string) {
+  const normalizedSlug = normalizeSlug(slug);
+
   try {
-    return await aardFetch<AardContentItem>(`/projects/${encodeURIComponent(slug)}`);
+    return await aardFetch<AardContentItem>(`/projects/${encodeURIComponent(normalizedSlug)}`);
   } catch {
-    return null;
+    // Some WordPress/custom REST setups do not reliably match Arabic slugs
+    // through a path parameter. Fall back to the collection endpoint that
+    // already powers the projects listing, then match the normalized slug.
+    try {
+      const data = await aardFetch<AardCollection>('/projects?per_page=100');
+      return data.items.find((item) => normalizeSlug(item.slug) === normalizedSlug) ?? null;
+    } catch {
+      return null;
+    }
   }
 }
