@@ -14,12 +14,12 @@ export default function Footer() {
     <footer className="bg-[#003f66] font-[Alexandria] text-white">
       <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-10 px-5 py-12 sm:px-6 md:grid-cols-2 md:px-8 md:py-14 lg:grid-cols-[1.2fr_0.8fr_1fr] lg:gap-14">
         <div>
-          <div className="relative mb-5 h-14 w-full max-w-[230px] overflow-hidden rounded-lg bg-white px-3 py-2">
+          <div className="relative mb-5 h-[72px] w-[154px]">
             <Image
-              src="/full-logo.svg"
+              src="/white-mark-color-ar-en-h-plus.svg"
               alt="جمعية التحالف للإغاثة والتنمية"
               fill
-              className="object-contain object-right p-2"
+              className="object-contain object-right"
             />
           </div>
           <p className="max-w-md text-sm leading-7 text-white/75">
