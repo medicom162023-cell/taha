@@ -1,10 +1,12 @@
+import Image from 'next/image';
+
 const partners = [
-  'UNDP',
-  'Kuwait Fund',
-  'BADEA',
-  'Arab Fund',
-  'شركاء الإغاثة',
-  'شركاء التنمية',
+  { name: 'UNDP', logo: '/partners/undp.png' },
+  { name: 'البنك الإسلامي للتنمية', logo: '/partners/isdb.png' },
+  { name: 'Kuwait Fund', logo: '/partners/kuwait-fund.png' },
+  { name: 'BADEA', logo: '/partners/badea.png' },
+  { name: 'الصندوق العربي للإنماء الاقتصادي والاجتماعي', logo: '/partners/arab-fund.png' },
+  { name: 'البنك الإسلامي للتنمية', logo: '/partners/isdb.png' },
 ];
 
 export default function PartnersSection() {
@@ -20,12 +22,18 @@ export default function PartnersSection() {
         </div>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {partners.map((partner) => (
+          {partners.map((partner, index) => (
             <div
-              key={partner}
+              key={`${partner.name}-${index}`}
               className="flex min-h-28 items-center justify-center rounded-2xl border border-[#e9f1ee] bg-white px-4 text-center text-sm font-bold text-[#5b7180] shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#51c698]/40 hover:text-[#00406d] hover:shadow-md"
             >
-              {partner}
+              <Image
+                src={partner.logo}
+                alt={partner.name}
+                width={120}
+                height={88}
+                className="h-[88px] w-full object-contain"
+              />
             </div>
           ))}
         </div>
