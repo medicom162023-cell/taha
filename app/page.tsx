@@ -5,6 +5,7 @@ import CommunityImpact from "@/components/CommunityImpact";
 import DonationBanner from "@/components/DonationBanner";
 import LatestNews from "@/components/LatestNews";
 import PartnersSection from "@/components/PartnersSection";
+import AidRegistration from "@/components/AidRegistration";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <DonationBanner />
       <LatestNews />
       <PartnersSection />
+      <AidRegistration />
     </main>
   );
 }
