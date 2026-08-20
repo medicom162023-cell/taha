@@ -8,6 +8,20 @@
   --brand-green-dark: #45b287;
 }
 
+@layer components {
+  .form-section {
+    @apply space-y-5 border-b border-[#e5edef] pb-7 last:border-b-0;
+  }
+
+  .form-section-title {
+    @apply border-r-4 border-[#51c698] pr-3 text-xl font-extrabold text-[#00466f];
+  }
+
+  .form-input {
+    @apply min-h-12 w-full rounded-lg border border-[#cedcdf] bg-white px-3.5 py-2.5 text-sm text-[#243b4a] outline-none transition placeholder:text-[#9aa8b0] focus:border-[#51c698] focus:ring-2 focus:ring-[#51c698]/20;
+  }
+}
+
 @layer base {
   * {
     box-sizing: border-box;

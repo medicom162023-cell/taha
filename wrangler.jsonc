@@ -9,6 +9,19 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "kv_namespaces": [
+    {
+      "binding": "NEWS_CACHE",
+      "id": "ba11526c35334779a9451f4cf533399f"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "ASSISTANCE_DB",
+      "database_name": "aard-assistance-test",
+      "database_id": "4e3d9412-0cf0-429b-a337-f2ae2ae9c464"
+    }
+  ],
   "observability": {
     "enabled": true
   }

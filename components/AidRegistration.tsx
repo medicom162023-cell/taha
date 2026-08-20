@@ -19,7 +19,7 @@ export default function AidRegistration() {
           </p>
         </div>
         <Link
-          href="/contact"
+          href="/assistance-registration"
           className="inline-flex h-16 w-[168px] shrink-0 items-center justify-center rounded-lg bg-[#51c698] text-base font-bold text-white transition hover:bg-[#45b287]"
         >
           سجل الآن
