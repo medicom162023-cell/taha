@@ -3,6 +3,11 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 export const runtime = 'nodejs';
 
 type Person = { name?: unknown; nationalId?: unknown; birthDate?: unknown; detail?: unknown };
+type AssistanceDatabase = {
+  prepare(query: string): {
+    bind(...values: unknown[]): { run(): Promise<unknown> };
+  };
+};
 type Submission = Record<string, unknown> & {
   fullName?: unknown;
   nationalId?: unknown;
@@ -135,7 +140,7 @@ export async function POST(request: Request) {
 
   try {
     const { env } = getCloudflareContext();
-    const database = env.ASSISTANCE_DB as D1Database | undefined;
+    const database = (env as unknown as { ASSISTANCE_DB?: AssistanceDatabase }).ASSISTANCE_DB;
     if (!database) return json('خدمة التسجيل غير متاحة مؤقتًا.', 503);
     await database.prepare(`
       INSERT INTO assistance_applications (
