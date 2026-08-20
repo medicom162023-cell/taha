@@ -25,6 +25,7 @@ type Submission = Record<string, unknown> & {
   consent?: unknown;
   website?: unknown;
   startedAt?: unknown;
+  turnstileToken?: unknown;
   wives?: unknown;
   children?: unknown;
   chronicPatients?: unknown;
@@ -100,6 +101,9 @@ export async function POST(request: Request) {
     return json('انتهت جلسة النموذج. أعد تحميل الصفحة وحاول مجددًا.', 400);
   }
 
+  const turnstileToken = text(body.turnstileToken, 2048, true);
+  if (!turnstileToken) return json('يرجى إكمال التحقق الأمني.', 422);
+
   const fullName = text(body.fullName, 120, true);
   const nationalId = text(body.nationalId, 9, true);
   const primaryPhone = phone(body.primaryPhone, true);
@@ -140,8 +144,25 @@ export async function POST(request: Request) {
 
   try {
     const { env } = getCloudflareContext();
-    const database = (env as unknown as { ASSISTANCE_DB?: AssistanceDatabase }).ASSISTANCE_DB;
+    const bindings = env as unknown as { ASSISTANCE_DB?: AssistanceDatabase; TURNSTILE_SECRET_KEY?: string };
+    const database = bindings.ASSISTANCE_DB;
     if (!database) return json('خدمة التسجيل غير متاحة مؤقتًا.', 503);
+    if (!bindings.TURNSTILE_SECRET_KEY) return json('التحقق الأمني غير متاح مؤقتًا.', 503);
+
+    const verificationBody = new FormData();
+    verificationBody.set('secret', bindings.TURNSTILE_SECRET_KEY);
+    verificationBody.set('response', turnstileToken);
+    const connectingIp = request.headers.get('cf-connecting-ip');
+    if (connectingIp) verificationBody.set('remoteip', connectingIp);
+    const verificationResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: verificationBody,
+    });
+    const verification = await verificationResponse.json() as { success?: boolean; hostname?: string };
+    if (!verification.success || verification.hostname !== 'aard-figma-test.aard-preview.workers.dev') {
+      return json('فشل التحقق الأمني. يرجى المحاولة مجددًا.', 403);
+    }
+
     await database.prepare(`
       INSERT INTO assistance_applications (
         national_id, submitted_at, full_name, primary_phone, alternate_phone,

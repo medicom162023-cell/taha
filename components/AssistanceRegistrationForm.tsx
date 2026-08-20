@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useRef, useState } from 'react';
+import Script from 'next/script';
 
 type Person = { name: string; nationalId?: string; birthDate?: string; detail?: string };
 type Status = { type: 'idle' | 'loading' | 'success' | 'error'; message: string };
@@ -8,6 +9,7 @@ type Status = { type: 'idle' | 'loading' | 'success' | 'error'; message: string 
 const governorates = ['شمال غزة', 'غزة', 'الوسطى', 'خانيونس', 'رفح'];
 const housingStatuses = ['لا يوجد ضرر صالح للسكن', 'ضرر جزئي صالح للسكن', 'ضرر كلي غير صالح للسكن'];
 const housingTypes = ['ملك', 'إيجار', 'مركز إيواء', 'استضافة عند الأقارب', 'خيمة'];
+const turnstileSiteKey = '0x4AAAAAAEWvWQrG_wnv3kve';
 
 const emptyPerson = (): Person => ({ name: '', nationalId: '', birthDate: '', detail: '' });
 
@@ -111,6 +113,7 @@ export default function AssistanceRegistrationForm() {
     const payload = {
       ...fields,
       startedAt: startedAt.current,
+      turnstileToken: fields['cf-turnstile-response'],
       wives: maritalStatus === 'متزوج' ? wives : [],
       children: children.filter((person) => person.name.trim()),
       chronicPatients: hasChronic === 'نعم' ? chronicPatients : [],
@@ -139,9 +142,13 @@ export default function AssistanceRegistrationForm() {
       setPeopleWithDisabilities([emptyPerson()]);
       setWarInjured([emptyPerson()]);
       startedAt.current = 0;
+      const turnstile = (window as unknown as { turnstile?: { reset(): void } }).turnstile;
+      turnstile?.reset();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       setStatus({ type: 'error', message: error instanceof Error ? error.message : 'تعذر إرسال الطلب.' });
+      const turnstile = (window as unknown as { turnstile?: { reset(): void } }).turnstile;
+      turnstile?.reset();
     }
   }
 
@@ -215,6 +222,11 @@ export default function AssistanceRegistrationForm() {
         <input name="consent" type="checkbox" value="yes" required className="mt-1.5 accent-[#51c698]" />
         <span>أقر بصحة البيانات المدخلة، وأوافق على استخدامها من جمعية التحالف للإغاثة والتنمية لدراسة الاحتياج والتواصل بخصوص برامج المساعدات.</span>
       </label>
+
+      <div className="flex min-h-[70px] justify-start overflow-hidden">
+        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
+        <div className="cf-turnstile" data-sitekey={turnstileSiteKey} data-language="ar" data-theme="light" />
+      </div>
 
       <button type="submit" disabled={status.type === 'loading'} className="min-h-14 w-full rounded-xl bg-[#51c698] px-6 py-3 text-base font-extrabold text-white transition hover:bg-[#45b287] disabled:cursor-wait disabled:opacity-60 sm:w-auto sm:min-w-48">
         {status.type === 'loading' ? 'جارٍ الإرسال...' : 'إرسال الطلب'}
