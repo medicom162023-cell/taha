@@ -3,13 +3,63 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 
 const stats = [
-  { number: '+15000', label: 'مستفيد', icon: 'users' },
-  { number: '50', label: 'مشروع منجز', icon: 'projects' },
-  { number: '13', label: 'سنة من العطاء', icon: 'years' },
-  { number: '20', label: 'جهة شريكة', icon: 'partners' },
+  { number: 15000, prefix: '+', label: 'مستفيد', icon: 'users' },
+  { number: 50, prefix: '', label: 'مشروع منجز', icon: 'projects' },
+  { number: 13, prefix: '', label: 'سنة من العطاء', icon: 'years' },
+  { number: 20, prefix: '', label: 'جهة شريكة', icon: 'partners' },
 ];
+
+function AnimatedNumber({ value, prefix = '' }: { value: number; prefix?: string }) {
+  const [count, setCount] = useState(0);
+  const numberRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = numberRef.current;
+    if (!element) return;
+
+    let animationFrame = 0;
+    let hasAnimated = false;
+    const duration = value >= 1000 ? 1800 : 1200;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || hasAnimated) return;
+      hasAnimated = true;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setCount(value);
+        observer.disconnect();
+        return;
+      }
+
+      const startTime = performance.now();
+      const animate = (currentTime: number) => {
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.round(value * easedProgress));
+
+        if (progress < 1) animationFrame = requestAnimationFrame(animate);
+        else observer.disconnect();
+      };
+
+      animationFrame = requestAnimationFrame(animate);
+    }, { threshold: 0.45 });
+
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [value]);
+
+  return (
+    <div ref={numberRef} className="text-[32px] font-normal leading-[39px] text-[#00406d]" dir="ltr">
+      {prefix}{count}
+    </div>
+  );
+}
 
 function StatIcon({ type }: { type: string }) {
   const paths: Record<string, React.ReactNode> = {
@@ -79,7 +129,7 @@ export default function AboutAndStats() {
               <div className="mx-auto mb-[11px] flex h-[64px] w-[64px] items-center justify-center rounded-[8px] bg-[#effaf6] text-[#51c698] lg:h-[76px] lg:w-[76px]">
                 <StatIcon type={stat.icon} />
               </div>
-              <div className="text-[32px] font-normal leading-[39px] text-[#00406d]" dir="ltr">{stat.number}</div>
+              <AnimatedNumber value={stat.number} prefix={stat.prefix} />
               <div className="mt-[1px] text-[14px] font-normal leading-[20px] text-[#00406d]">{stat.label}</div>
             </motion.div>
           ))}
