@@ -6,6 +6,7 @@ type Person = { name?: unknown; nationalId?: unknown; birthDate?: unknown; detai
 type AssistanceDatabase = {
   prepare(query: string): {
     bind(...values: unknown[]): { run(): Promise<unknown> };
+    all<T = Record<string, unknown>>(): Promise<{ results?: T[] }>;
   };
 };
 type Submission = Record<string, unknown> & {
@@ -31,6 +32,7 @@ type Submission = Record<string, unknown> & {
   chronicPatients?: unknown;
   peopleWithDisabilities?: unknown;
   warInjured?: unknown;
+  customFields?: unknown;
 };
 
 const allowedGovernorates = new Set(['شمال غزة', 'غزة', 'الوسطى', 'خانيونس', 'رفح']);
@@ -149,6 +151,24 @@ export async function POST(request: Request) {
     if (!database) return json('خدمة التسجيل غير متاحة مؤقتًا.', 503);
     if (!bindings.TURNSTILE_SECRET_KEY) return json('التحقق الأمني غير متاح مؤقتًا.', 503);
 
+    const validatedCustomFields: Record<string, string> = {};
+    try {
+      const configured = await database.prepare(`SELECT field_key AS fieldKey, field_type AS fieldType, options_json AS optionsJson, is_required AS isRequired FROM assistance_form_fields WHERE is_active = 1 AND is_core = 0 ORDER BY sort_order, id`).all<{
+        fieldKey:string; fieldType:string; optionsJson:string; isRequired:number;
+      }>();
+      const submitted = body.customFields && typeof body.customFields === 'object' && !Array.isArray(body.customFields) ? body.customFields as Record<string, unknown> : {};
+      for (const field of configured.results || []) {
+        const value = text(submitted[field.fieldKey], field.fieldType === 'textarea' ? 1000 : 500, Boolean(field.isRequired));
+        if (value === null) return json('تحقق من الحقول الإضافية المطلوبة.', 422);
+        const options = JSON.parse(field.optionsJson || '[]') as string[];
+        if ((field.fieldType === 'select' || field.fieldType === 'radio') && value && !options.includes(value)) return json('قيمة أحد الحقول الإضافية غير صحيحة.', 422);
+        validatedCustomFields[field.fieldKey] = value || '';
+      }
+    } catch (error) {
+      console.error('Custom fields validation unavailable', error);
+      return json('إعدادات الاستمارة غير متاحة مؤقتًا.', 503);
+    }
+
     const verificationBody = new FormData();
     verificationBody.set('secret', bindings.TURNSTILE_SECRET_KEY);
     verificationBody.set('response', turnstileToken);
@@ -163,6 +183,7 @@ export async function POST(request: Request) {
       return json('فشل التحقق الأمني. يرجى المحاولة مجددًا.', 403);
     }
 
+    const payloadWithCustomFields = JSON.stringify({ ...JSON.parse(rawPayload), customFields: validatedCustomFields });
     await database.prepare(`
       INSERT INTO assistance_applications (
         national_id, submitted_at, full_name, primary_phone, alternate_phone,
@@ -191,7 +212,7 @@ export async function POST(request: Request) {
     `).bind(
       nationalId, submittedAt, fullName, primaryPhone, alternatePhone || null,
       birthDate, email || null, maritalStatus, governorate, originalAddress,
-      currentGovernorate, currentAddress, housingStatus, housingType || null, rawPayload,
+      currentGovernorate, currentAddress, housingStatus, housingType || null, payloadWithCustomFields,
     ).run();
     return json('تم تسجيل طلبك بنجاح. عند وجود طلب سابق لنفس رقم الهوية، تم اعتماد هذا الطلب باعتباره الأحدث.', 200);
   } catch (error) {

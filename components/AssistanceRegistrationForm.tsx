@@ -1,10 +1,11 @@
 'use client';
 
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 
 type Person = { name: string; nationalId?: string; birthDate?: string; detail?: string };
 type Status = { type: 'idle' | 'loading' | 'success' | 'error'; message: string };
+type CustomField = { fieldKey:string; label:string; fieldType:string; helpText:string; options:string[]; isRequired:boolean };
 
 const governorates = ['شمال غزة', 'غزة', 'الوسطى', 'خانيونس', 'رفح'];
 const housingStatuses = ['لا يوجد ضرر صالح للسكن', 'ضرر جزئي صالح للسكن', 'ضرر كلي غير صالح للسكن'];
@@ -103,6 +104,11 @@ export default function AssistanceRegistrationForm() {
   const [peopleWithDisabilities, setPeopleWithDisabilities] = useState<Person[]>([emptyPerson()]);
   const [warInjured, setWarInjured] = useState<Person[]>([emptyPerson()]);
   const [status, setStatus] = useState<Status>({ type: 'idle', message: '' });
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
+
+  useEffect(() => {
+    fetch('/api/assistance-fields', { cache: 'no-store' }).then((response) => response.json() as Promise<{ fields?:CustomField[] }>).then((data) => setCustomFields(data.fields || [])).catch(() => setCustomFields([]));
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -119,6 +125,7 @@ export default function AssistanceRegistrationForm() {
       chronicPatients: hasChronic === 'نعم' ? chronicPatients : [],
       peopleWithDisabilities: hasDisability === 'نعم' ? peopleWithDisabilities : [],
       warInjured: hasWarInjury === 'نعم' ? warInjured : [],
+      customFields: Object.fromEntries(customFields.map((field) => [field.fieldKey, fields[field.fieldKey] ?? ''])),
     };
 
     try {
@@ -223,6 +230,8 @@ export default function AssistanceRegistrationForm() {
         <span>أقر بصحة البيانات المدخلة، وأوافق على استخدامها من جمعية التحالف للإغاثة والتنمية لدراسة الاحتياج والتواصل بخصوص برامج المساعدات.</span>
       </label>
 
+      {customFields.length > 0 && <section className="form-section"><h2 className="form-section-title">بيانات إضافية</h2><div className="grid gap-5 md:grid-cols-2">{customFields.map((field) => <CustomInput key={field.fieldKey} field={field}/>)}</div></section>}
+
       <div className="flex min-h-[70px] justify-start overflow-hidden">
         <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
         <div className="cf-turnstile" data-sitekey={turnstileSiteKey} data-language="ar" data-theme="light" />
@@ -233,4 +242,15 @@ export default function AssistanceRegistrationForm() {
       </button>
     </form>
   );
+}
+
+function CustomInput({ field }: { field: CustomField }) {
+  const common = { name:field.fieldKey, required:field.isRequired, className:'form-input', 'aria-describedby':field.helpText ? `${field.fieldKey}-help` : undefined };
+  let input: React.ReactNode;
+  if (field.fieldType === 'textarea') input = <textarea {...common} maxLength={1000} className="form-input min-h-28" />;
+  else if (field.fieldType === 'select') input = <select {...common}><option value="">اختر</option>{field.options.map(option=><option key={option}>{option}</option>)}</select>;
+  else if (field.fieldType === 'radio') input = <div className="flex flex-wrap gap-4">{field.options.map(option=><label key={option} className="flex gap-2"><input type="radio" name={field.fieldKey} value={option} required={field.isRequired}/>{option}</label>)}</div>;
+  else if (field.fieldType === 'checkbox') input = <input type="checkbox" name={field.fieldKey} value="نعم" required={field.isRequired} className="h-5 w-5 accent-[#51c698]"/>;
+  else input = <input {...common} type={field.fieldType === 'number' ? 'number' : field.fieldType === 'date' ? 'date' : 'text'} maxLength={field.fieldType === 'text' ? 500 : undefined}/>;
+  return <Field label={field.label} required={field.isRequired}>{input}{field.helpText&&<small id={`${field.fieldKey}-help`} className="mt-1 block text-slate-500">{field.helpText}</small>}</Field>;
 }
