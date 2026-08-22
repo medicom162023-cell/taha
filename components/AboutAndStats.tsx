@@ -28,27 +28,27 @@ function StatIcon({ type }: { type: string }) {
 
 export default function AboutAndStats() {
   return (
-    <section id="about" className="bg-[#f5f5f5] py-20 font-[Alexandria] lg:py-[139px]">
-      <div className="mx-auto max-w-[1088px] px-5 lg:px-0">
-        <div className="grid items-start gap-10 lg:grid-cols-[536px_444px] lg:gap-[108px]">
+    <section id="about" className="bg-[#f5f5f5] py-16 font-[Alexandria] lg:py-24">
+      <div className="mx-auto max-w-[1200px] px-5 xl:px-0">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
           <motion.div
             initial={{ opacity: 0, x: 35 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.55 }}
-            className="order-2 text-right lg:order-1 lg:pt-[37px]"
+            className="order-2 text-right lg:order-1"
           >
-            <span className="mb-[31px] inline-flex flex-col items-end gap-[10px] text-[20px] font-bold leading-[29px] text-[#51c698]">
+            <span className="mb-7 inline-flex flex-col items-end gap-[10px] text-[22px] font-bold leading-[32px] text-[#51c698] lg:text-[24px]">
               من نحن
               <span className="h-[2px] w-[31px] bg-[#00406d]" />
             </span>
-            <h2 className="mb-[17px] text-[20px] font-bold leading-[30px] text-[#00406d]">
+            <h2 className="mb-5 text-[26px] font-bold leading-[1.5] text-[#00406d] lg:text-[30px]">
               إغاثة. تمكين. تنمية
             </h2>
-            <p className="max-w-[536px] text-[12px] leading-[30px] text-[#707070]">
+            <p className="max-w-[616px] text-[16px] leading-[2.1] text-[#707070] lg:text-[17px]">
               جمعية التحالف للإغاثة والتنمية هي مؤسسة إنسانية مستقلة تعمل في قطاع غزة، وتسعى إلى تعزيز كرامة الإنسان عبر برامج إغاثية وتنموية قائمة على تقييم الاحتياجات الفعلية. نؤمن أن العمل الإنساني لا يقتصر على الاستجابة الطارئة، بل يمتد لبناء حلول مستدامة تسهم في تمكين الأفراد والمجتمعات، وتهيئ بيئة أكثر استقرارًا وأملًا للمستقبل.
             </p>
-            <Link href="/about" className="mt-[17px] inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[12px] font-normal text-white transition hover:bg-[#45b287]">
+            <Link href="/about" className="mt-6 inline-flex h-[52px] w-[184px] items-center justify-center rounded-[8px] bg-[#51c698] text-[15px] font-medium text-white transition hover:bg-[#45b287]">
               تعرف علينا أكثر
             </Link>
           </motion.div>
@@ -60,13 +60,13 @@ export default function AboutAndStats() {
             transition={{ duration: 0.55 }}
             className="order-1 lg:order-2"
           >
-            <div className="relative h-[330px] overflow-hidden rounded-[8px] lg:h-[350px] lg:w-[444px]">
+            <div className="relative h-[340px] w-full overflow-hidden rounded-[8px] sm:h-[400px] lg:h-[410px] lg:w-[520px]">
               <Image src="/about-img.jpg" alt="أنشطة جمعية التحالف للإغاثة والتنمية" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
             </div>
           </motion.div>
         </div>
 
-        <div className="mt-20 grid grid-cols-2 gap-4 lg:mt-[139px] lg:grid-cols-4 lg:gap-4">
+        <div className="mt-20 grid grid-cols-2 gap-4 lg:mt-24 lg:grid-cols-4 lg:gap-4">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
