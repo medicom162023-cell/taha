@@ -20,7 +20,7 @@ export default function CommunityImpact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.55 }}
-            className="relative order-1 h-[360px] overflow-hidden rounded-[8px] sm:h-[420px] lg:h-[484px] lg:w-[540px]"
+            className="relative order-1 h-[360px] overflow-hidden rounded-[8px] sm:h-[420px] lg:col-start-1 lg:row-start-1 lg:h-[484px] lg:w-[540px]"
           >
             <Image
               src="/project.png"
@@ -36,9 +36,9 @@ export default function CommunityImpact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.55 }}
-            className="order-2 text-right"
+            className="order-2 text-right lg:col-start-2 lg:row-start-1"
           >
-            <span className="mb-[27px] inline-flex flex-col items-end gap-[10px] text-[20px] font-bold leading-[29px] text-[#51c698]">
+            <span className="mb-[27px] inline-flex flex-col items-start gap-[10px] text-[20px] font-bold leading-[29px] text-[#51c698]">
               الإغاثة والتنمية من أجل المجتمع
               <span className="h-[2px] w-[31px] bg-[#00406d]" />
             </span>
