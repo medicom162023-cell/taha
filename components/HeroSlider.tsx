@@ -56,7 +56,7 @@ export default function HeroSlider() {
   const slide = slides[current] || slides[0];
   return (
     <section className="relative w-full bg-[#003358] font-[Alexandria]">
-      <div className="relative mx-auto flex h-[500px] w-full max-w-[1366px] items-center justify-center overflow-hidden text-center sm:h-[540px] md:h-[590px] lg:h-[612px]">
+      <div className="relative mx-auto flex h-[440px] w-full max-w-[1366px] items-center justify-center overflow-hidden text-center min-[390px]:h-[470px] sm:h-[540px] md:h-[590px] lg:h-[612px]">
         <AnimatePresence mode="popLayout" custom={direction}>
           <motion.div
             key={current}
@@ -65,7 +65,7 @@ export default function HeroSlider() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden px-6 text-center md:px-16"
+            className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden px-5 text-center sm:px-8 md:px-16"
           >
             <motion.div
               initial={{ scale: 1 }}
@@ -91,7 +91,7 @@ export default function HeroSlider() {
               }}
             />
 
-            <div className="absolute left-[7%] top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-[7px]">
+            <div className="absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 flex-row items-center gap-[7px] sm:bottom-auto sm:left-[7%] sm:top-1/2 sm:-translate-x-0 sm:-translate-y-1/2 sm:flex-col">
               {slides.map((_, index) => (
                 <button
                   key={index}
@@ -108,7 +108,7 @@ export default function HeroSlider() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="relative z-20 flex max-w-[760px] flex-col items-center"
+              className="relative z-20 flex w-full max-w-[760px] flex-col items-center pb-7 sm:pb-0"
             >
               <motion.div variants={itemVariants} className="mb-4">
                 <span className="inline-block rounded-[6px] border border-white/40 bg-white/15 px-4 py-1.5 text-[11px] font-medium text-white backdrop-blur-sm md:text-xs">
@@ -118,14 +118,14 @@ export default function HeroSlider() {
 
               <motion.h1
                 variants={itemVariants}
-                className="mb-4 text-[27px] font-bold leading-[1.35] text-white md:text-[34px] lg:text-[38px]"
+                className="mb-3 text-[24px] font-bold leading-[1.45] text-white min-[390px]:text-[27px] md:mb-4 md:text-[34px] lg:text-[38px]"
               >
                 {slide.title}
               </motion.h1>
 
               <motion.p
                 variants={itemVariants}
-                className="mb-6 max-w-[690px] text-[12px] leading-7 text-white/95 md:text-[13px] lg:text-[14px]"
+                className="mb-5 max-w-[690px] text-[12px] leading-6 text-white/95 sm:leading-7 md:mb-6 md:text-[13px] lg:text-[14px]"
               >
                 {slide.description}
               </motion.p>

@@ -7,14 +7,14 @@ import { useHomepageContent } from '@/components/HomepageContentProvider';
 export default function DonationBanner() {
   const { donation } = useHomepageContent();
   return (
-    <section className="bg-white px-5 py-8 font-[Alexandria] md:px-8 md:py-12">
+    <section className="bg-white px-4 py-8 font-[Alexandria] sm:px-5 md:px-8 md:py-12">
       <div className="mx-auto max-w-[1180px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.5 }}
-          className="relative isolate overflow-hidden rounded-[28px] px-6 py-12 shadow-lg md:px-12 md:py-14 lg:px-16"
+          className="relative isolate overflow-hidden rounded-[20px] px-5 py-10 shadow-lg sm:rounded-[28px] sm:px-6 sm:py-12 md:px-12 md:py-14 lg:px-16"
           style={{
             backgroundImage: `url('${donation.image}')`,
             backgroundSize: 'cover',
@@ -28,7 +28,7 @@ export default function DonationBanner() {
               <span className="mb-3 inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white/90">
                 {donation.badge}
               </span>
-              <h2 className="text-3xl font-extrabold leading-tight text-white md:text-4xl">
+              <h2 className="text-[26px] font-extrabold leading-[1.45] text-white sm:text-3xl md:text-4xl">
                 {donation.title}
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-7 text-white/90 md:text-base">
@@ -38,7 +38,7 @@ export default function DonationBanner() {
 
             <Link
               href={donation.buttonHref}
-              className="inline-flex min-w-36 items-center justify-center rounded-xl bg-[#51c698] px-8 py-4 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#45b287]"
+              className="inline-flex w-full min-w-36 items-center justify-center rounded-xl bg-[#51c698] px-8 py-4 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#45b287] sm:w-auto"
             >
               {donation.buttonLabel}
             </Link>

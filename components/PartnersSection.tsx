@@ -20,7 +20,7 @@ export default function PartnersSection() {
           {partners.items.map((partner, index) => (
             <div
               key={`${partner.name}-${index}`}
-              className="flex min-h-28 items-center justify-center rounded-2xl border border-[#e9f1ee] bg-white px-4 text-center text-sm font-bold text-[#5b7180] shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#51c698]/40 hover:text-[#00406d] hover:shadow-md"
+              className="flex min-h-24 min-w-0 items-center justify-center rounded-2xl border border-[#e9f1ee] bg-white px-2 text-center text-sm font-bold text-[#5b7180] shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#51c698]/40 hover:text-[#00406d] hover:shadow-md sm:min-h-28 sm:px-4"
             >
               <Image
                 src={partner.logo}

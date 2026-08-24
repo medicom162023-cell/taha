@@ -8,9 +8,9 @@ import { useHomepageContent } from '@/components/HomepageContentProvider';
 export default function ProjectsSection() {
   const { projects } = useHomepageContent();
   return (
-    <section id="projects" className="bg-[#f5f5f5] py-20 font-[Alexandria] lg:py-[139px]">
+    <section id="projects" className="bg-[#f5f5f5] py-14 font-[Alexandria] sm:py-20 lg:py-[139px]">
       <div className="mx-auto max-w-[1200px] px-5 xl:px-0">
-        <div className="mb-[50px] text-center">
+        <div className="mb-9 text-center sm:mb-[50px]">
           <span className="mb-[10px] block text-[20px] font-bold leading-[29px] text-[#51c698]">{projects.eyebrow}</span>
           <h2 className="text-[20px] font-bold leading-[30px] text-[#00406d]">{projects.title}</h2>
           <p className="mx-auto mt-[12px] max-w-[620px] text-[12px] leading-[24px] text-[#707070]">
@@ -26,7 +26,7 @@ export default function ProjectsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="group h-[400px] overflow-hidden rounded-[8px] border border-[#dedede] bg-white transition hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(0,64,109,0.08)]"
+              className="group min-h-[400px] overflow-hidden rounded-[8px] border border-[#dedede] bg-white transition hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(0,64,109,0.08)]"
             >
               <div className="relative h-[190px] overflow-hidden">
                 <Image src={project.image} alt={project.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 288px" className="object-cover transition duration-500 group-hover:scale-105" />

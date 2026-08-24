@@ -19,9 +19,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#edf2f4] bg-white font-[Alexandria]">
-      <div className="mx-auto flex h-[78px] w-full max-w-[1366px] items-center justify-between px-5 md:px-10 lg:px-[84px]">
+      <div className="mx-auto flex h-[68px] w-full max-w-[1366px] items-center justify-between gap-3 px-4 sm:h-[78px] sm:px-5 md:px-10 lg:px-[84px]">
         <Link href="/" className="flex shrink-0 items-center" aria-label="الصفحة الرئيسية">
-          <div className="relative h-[48px] w-[190px] md:w-[220px]">
+          <div className="relative h-[42px] w-[158px] sm:h-[48px] sm:w-[190px] md:w-[220px]">
             <Image
               src="/full-logo.svg"
               alt="جمعية التحالف للإغاثة والتنمية"
@@ -44,7 +44,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
             href="/donate"
             className="hidden min-w-[112px] items-center justify-center rounded-[7px] bg-[#45bd91] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#37aa80] sm:inline-flex"

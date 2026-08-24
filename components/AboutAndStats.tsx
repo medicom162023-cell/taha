@@ -23,7 +23,7 @@ function StatIcon({ type }: { type: string }) {
 export default function AboutAndStats() {
   const { about } = useHomepageContent();
   return (
-    <section id="about" className="bg-white py-20 font-[Alexandria] md:py-24">
+    <section id="about" className="bg-white py-14 font-[Alexandria] sm:py-16 md:py-24">
       <div className="mx-auto max-w-[1180px] px-5 md:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <motion.div
@@ -37,7 +37,7 @@ export default function AboutAndStats() {
               <span className="h-px w-8 bg-[#51c698]" />
               {about.eyebrow}
             </span>
-            <h2 className="mb-5 text-3xl font-extrabold leading-[1.45] text-[#003f6b] md:text-[38px]">
+            <h2 className="mb-4 text-[26px] font-extrabold leading-[1.5] text-[#003f6b] sm:text-3xl md:mb-5 md:text-[38px]">
               {about.title.split('\n').map((line, index) => <span key={line}>{index > 0 && <br />}{line}</span>)}
             </h2>
             <p className="max-w-xl text-sm leading-8 text-[#667085] md:text-[15px]">
@@ -56,10 +56,10 @@ export default function AboutAndStats() {
             transition={{ duration: 0.55 }}
             className="order-1 lg:order-2"
           >
-            <div className="relative h-[330px] overflow-hidden rounded-[22px] md:h-[430px]">
+            <div className="relative h-[270px] overflow-hidden rounded-[18px] min-[390px]:h-[310px] sm:h-[350px] md:h-[430px] md:rounded-[22px]">
               <Image src={about.image} alt={about.title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#003f6b]/20 to-transparent" />
-              <div className="absolute bottom-5 right-5 rounded-xl bg-white/95 px-5 py-4 shadow-lg backdrop-blur">
+              <div className="absolute bottom-3 right-3 max-w-[calc(100%-1.5rem)] rounded-xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:bottom-5 sm:right-5 sm:px-5 sm:py-4">
                 <p className="text-xs font-semibold text-[#51c698]">{about.imageBadge}</p>
                 <p className="mt-1 text-sm font-bold text-[#003f6b]">{about.imageCaption}</p>
               </div>
@@ -75,12 +75,12 @@ export default function AboutAndStats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="group rounded-2xl border border-[#e8eef2] bg-white px-4 py-6 text-center transition hover:-translate-y-1 hover:border-[#51c698]/35 hover:shadow-lg md:px-5 md:py-7"
+              className="group min-w-0 rounded-2xl border border-[#e8eef2] bg-white px-2 py-5 text-center transition hover:-translate-y-1 hover:border-[#51c698]/35 hover:shadow-lg sm:px-4 sm:py-6 md:px-5 md:py-7"
             >
               <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#51c698]/10 text-[#51c698] transition group-hover:bg-[#51c698] group-hover:text-white">
                 <StatIcon type={stat.icon} />
               </div>
-              <div className="text-2xl font-extrabold text-[#003f6b] md:text-3xl">{stat.number}</div>
+              <div className="break-words text-xl font-extrabold text-[#003f6b] sm:text-2xl md:text-3xl">{stat.number}</div>
               <div className="mt-1 text-xs font-medium text-[#7b8794] md:text-sm">{stat.label}</div>
             </motion.div>
           ))}
