@@ -14,7 +14,7 @@ export default function CommunityImpact() {
   return (
     <section className="bg-white py-20 font-[Alexandria] lg:py-[139px]">
       <div className="mx-auto max-w-[1088px] px-5 lg:px-0">
-        <div className="grid items-center gap-10 lg:grid-cols-[540px_440px] lg:gap-[108px]">
+        <div dir="ltr" className="grid items-start gap-10 lg:grid-cols-[540px_440px] lg:gap-[108px]">
           <motion.div
             initial={{ opacity: 0, x: 28 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -36,7 +36,8 @@ export default function CommunityImpact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.55 }}
-            className="order-2 text-right lg:col-start-2 lg:row-start-1"
+            dir="rtl"
+            className="order-2 text-right lg:col-start-2 lg:row-start-1 lg:pt-[20px]"
           >
             <span className="mb-[27px] inline-flex flex-col items-start gap-[10px] text-[20px] font-bold leading-[29px] text-[#51c698]">
               الإغاثة والتنمية من أجل المجتمع
