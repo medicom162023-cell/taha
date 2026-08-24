@@ -6,10 +6,11 @@ import DonationBanner from "@/components/DonationBanner";
 import LatestNews from "@/components/LatestNews";
 import PartnersSection from "@/components/PartnersSection";
 import AidRegistration from "@/components/AidRegistration";
+import { HomepageContentProvider } from "@/components/HomepageContentProvider";
 
 export default function HomePage() {
   return (
-    <main className="w-full overflow-x-hidden bg-white">
+    <HomepageContentProvider><main className="w-full overflow-x-hidden bg-white">
       <HeroSlider />
       <AboutAndStats />
       <ProjectsSection />
@@ -18,6 +19,6 @@ export default function HomePage() {
       <LatestNews />
       <PartnersSection />
       <AidRegistration />
-    </main>
+    </main></HomepageContentProvider>
   );
 }

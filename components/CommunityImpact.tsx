@@ -3,14 +3,10 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const points = [
-  'الاستجابة للاحتياجات الإنسانية الطارئة',
-  'تعزيز الوعي الصحي والمجتمعي',
-  'دعم المبادرات التنموية المحلية',
-];
+import { useHomepageContent } from '@/components/HomepageContentProvider';
 
 export default function CommunityImpact() {
+  const { impact } = useHomepageContent();
   return (
     <section className="bg-white py-20 font-[Alexandria] lg:py-[139px]">
       <div className="mx-auto max-w-[1088px] px-5 lg:px-0">
@@ -23,8 +19,8 @@ export default function CommunityImpact() {
             className="relative order-1 h-[360px] overflow-hidden rounded-[8px] sm:h-[420px] lg:col-start-1 lg:row-start-1 lg:h-[480px] lg:w-[540px]"
           >
             <Image
-              src="/project.png"
-              alt="أثر برامج جمعية التحالف للإغاثة والتنمية"
+              src={impact.image}
+              alt={impact.title}
               fill
               sizes="(min-width: 1024px) 540px, 100vw"
               className="object-cover"
@@ -40,18 +36,18 @@ export default function CommunityImpact() {
             className="order-2 text-right lg:col-start-2 lg:row-start-1 lg:pt-[20px]"
           >
             <span className="mb-[27px] inline-flex flex-col items-start gap-[10px] text-[24px] font-bold leading-[34px] text-[#51c698]">
-              الإغاثة والتنمية من أجل المجتمع
+              {impact.eyebrow}
               <span className="h-[2px] w-[31px] bg-[#00406d]" />
             </span>
             <h2 className="text-[16px] font-normal leading-[24px] text-[#707070]">
-              نعمل لدعم المجتمعات وتعزيز قدرتها على الصمود
+              {impact.title}
             </h2>
             <p className="mt-[18px] text-[12px] leading-[30px] text-[#707070]">
-              تلتزم جمعية التحالف للإغاثة والتنمية بتقديم استجابات إنسانية فعالة تسهم في التخفيف من آثار الأزمات الإنسانية وتعزيز قدرة المجتمعات على التعافي. ومن خلال برامج الإغاثة والتنمية، تعمل الجمعية على دعم الفئات الأكثر احتياجاً عبر تنفيذ مبادرات صحية وتوعوية وإنسانية تستهدف تحسين الظروف المعيشية وتعزيز الوعي المجتمعي.
+              {impact.description}
             </p>
 
             <div className="mt-[14px] space-y-[10px]">
-              {points.map((point) => (
+              {impact.points.map((point) => (
                 <div key={point} className="flex items-center justify-start gap-[10px]">
                   <span className="h-[7px] w-[7px] flex-none rounded-full bg-[#51c698]" />
                   <span className="text-[12px] font-normal leading-[18px] text-[#00406d]">{point}</span>
@@ -60,10 +56,10 @@ export default function CommunityImpact() {
             </div>
 
             <Link
-              href="/projects"
+              href={impact.buttonHref}
               className="mt-[29px] inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[12px] font-normal text-white transition hover:bg-[#45b287]"
             >
-              شاهد مشاريعنا
+              {impact.buttonLabel}
             </Link>
           </motion.div>
         </div>

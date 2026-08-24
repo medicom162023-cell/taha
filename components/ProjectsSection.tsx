@@ -3,48 +3,23 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const projects = [
-  {
-    title: 'مشروع توزيع السلال الغذائية الطارئة',
-    category: 'الأمن الغذائي',
-    description: 'توفير الدعم الغذائي العاجل للعائلات الأكثر احتياجاً في مناطق النزوح والتخفيف من معاناتهم اليومية.',
-    image: '/hero-bg.jpg',
-  },
-  {
-    title: 'دعم وتأهيل القطاع الصحي والمستشفيات',
-    category: 'القطاع الصحي',
-    description: 'توريد الأدوية والمستهلكات الطبية الضرورية لضمان استمرار تقديم الرعاية الصحية للمرضى والجرحى.',
-    image: '/hero-bg2.jpg',
-  },
-  {
-    title: 'توفير المياه النظيفة ودعم المجتمعات',
-    category: 'المياه والإصحاح',
-    description: 'تدخلات ميدانية لتحسين الوصول إلى المياه الآمنة ودعم التجمعات السكانية الأكثر تضرراً.',
-    image: '/project.png',
-  },
-  {
-    title: 'تعزيز قدرات المؤسسات والمجتمعات المحلية',
-    category: 'التنمية المجتمعية',
-    description: 'برامج تنموية تعزز قدرات المؤسسات المحلية وتدعم المبادرات المجتمعية الأكثر احتياجاً.',
-    image: '/alliance-ghadaq-capacity.jpg',
-  },
-];
+import { useHomepageContent } from '@/components/HomepageContentProvider';
 
 export default function ProjectsSection() {
+  const { projects } = useHomepageContent();
   return (
     <section id="projects" className="bg-[#f5f5f5] py-20 font-[Alexandria] lg:py-[139px]">
       <div className="mx-auto max-w-[1200px] px-5 xl:px-0">
         <div className="mb-[50px] text-center">
-          <span className="mb-[10px] block text-[20px] font-bold leading-[29px] text-[#51c698]">نشاطاتنا الميدانية</span>
-          <h2 className="text-[20px] font-bold leading-[30px] text-[#00406d]">مشاريع إنسانية تصنع الأثر</h2>
+          <span className="mb-[10px] block text-[20px] font-bold leading-[29px] text-[#51c698]">{projects.eyebrow}</span>
+          <h2 className="text-[20px] font-bold leading-[30px] text-[#00406d]">{projects.title}</h2>
           <p className="mx-auto mt-[12px] max-w-[620px] text-[12px] leading-[24px] text-[#707070]">
-              نطوّر تدخلات تستجيب للاحتياجات الأكثر إلحاحاً وتربط الاستجابة الطارئة بفرص التعافي والتنمية المستدامة.
+              {projects.description}
             </p>
         </div>
 
         <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
-          {projects.map((project, index) => (
+          {projects.items.map((project, index) => (
             <motion.article
               key={project.title}
               initial={{ opacity: 0, y: 28 }}
@@ -72,8 +47,8 @@ export default function ProjectsSection() {
         </div>
 
         <div className="mt-[48px] flex justify-center">
-          <Link href="/projects" className="inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[10px] font-normal text-white transition hover:bg-[#45b287]">
-            عرض كافة المشاريع
+          <Link href={projects.buttonHref} className="inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[10px] font-normal text-white transition hover:bg-[#45b287]">
+            {projects.buttonLabel}
           </Link>
         </div>
       </div>

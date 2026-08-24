@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useHomepageContent } from '@/components/HomepageContentProvider';
 
 export default function DonationBanner() {
+  const { donation } = useHomepageContent();
   return (
     <section className="bg-white px-5 py-8 font-[Alexandria] md:px-8 md:py-12">
       <div className="mx-auto max-w-[1180px]">
@@ -14,7 +16,7 @@ export default function DonationBanner() {
           transition={{ duration: 0.5 }}
           className="relative isolate overflow-hidden rounded-[28px] px-6 py-12 shadow-lg md:px-12 md:py-14 lg:px-16"
           style={{
-            backgroundImage: "url('/DonationBanner.png')",
+            backgroundImage: `url('${donation.image}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -24,21 +26,21 @@ export default function DonationBanner() {
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div className="max-w-2xl text-right">
               <span className="mb-3 inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white/90">
-                عطاؤك يصل إلى من يحتاجه
+                {donation.badge}
               </span>
               <h2 className="text-3xl font-extrabold leading-tight text-white md:text-4xl">
-                تبرعك يصنع فرقاً حقيقياً
+                {donation.title}
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-7 text-white/90 md:text-base">
-                بدعمك نستطيع الاستجابة للاحتياجات الإنسانية وتقديم المساعدة للأسر الأكثر احتياجاً في قطاع غزة.
+                {donation.description}
               </p>
             </div>
 
             <Link
-              href="/donate"
+              href={donation.buttonHref}
               className="inline-flex min-w-36 items-center justify-center rounded-xl bg-[#51c698] px-8 py-4 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#45b287]"
             >
-              تبرع الآن
+              {donation.buttonLabel}
             </Link>
           </div>
         </motion.div>

@@ -4,39 +4,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const slides = [
-  {
-    id: 1,
-    image: '/hero-bg.jpg',
-    badge: 'استجابة إنسانية فاعلة اليوم .. وكرامة مستدامة الغد',
-    title: 'من أجل نصرة الإنسان وبناء المستقبل',
-    description: 'نعمل على تمكين المجتمعات الأكثر احتياجاً عبر تدخلات إنسانية وتنمية مستدامة ترتكز على الكرامة، والعدالة، والاستجابة الفاعلة للاحتياجات الحقيقية.',
-  },
-  {
-    id: 2,
-    image: '/hero-bg2.jpg',
-    badge: 'رعاية صحية وتكافل مجتمعي مستدام',
-    title: 'شركاء في العطاء لصناعة الأمل',
-    description: 'نبذل الجهود الحثيثة لتوفير الاحتياجات الأساسية ودعم الأسر المتعففة والفئات الهشة في مختلف المناطق.',
-  },
-  {
-    id: 3,
-    image: '/about-img.jpg',
-    badge: 'تنمية مجتمعية وتمكين مستدام',
-    title: 'نصنع الأثر ونبني جسور المحبة',
-    description: 'نسعى جاهدين لإحداث تغيير إيجابي ومستدام في حياة الأفراد، عبر مشاريع تنموية وإغاثية شاملة ومتكاملة.',
-  },
-];
+import { useHomepageContent } from '@/components/HomepageContentProvider';
 
 export default function HeroSlider() {
+  const { hero } = useHomepageContent();
+  const slides = hero.slides;
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
   const nextSlide = useCallback(() => {
     setDirection(1);
-    setCurrent((prev) => (prev + 1) % slides.length);
-  }, []);
+    setCurrent((prev) => (prev + 1) % Math.max(slides.length, 1));
+  }, [slides.length]);
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 8000);
@@ -73,6 +52,8 @@ export default function HeroSlider() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
   };
 
+  if (!slides.length) return null;
+  const slide = slides[current] || slides[0];
   return (
     <section className="relative w-full bg-[#003358] font-[Alexandria]">
       <div className="relative mx-auto flex h-[500px] w-full max-w-[1366px] items-center justify-center overflow-hidden text-center sm:h-[540px] md:h-[590px] lg:h-[612px]">
@@ -93,8 +74,8 @@ export default function HeroSlider() {
               className="absolute inset-0 z-0 h-full w-full"
             >
               <Image
-                src={slides[current].image}
-                alt={slides[current].title}
+                src={slide.image}
+                alt={slide.title}
                 fill
                 priority={current === 0}
                 sizes="100vw"
@@ -131,7 +112,7 @@ export default function HeroSlider() {
             >
               <motion.div variants={itemVariants} className="mb-4">
                 <span className="inline-block rounded-[6px] border border-white/40 bg-white/15 px-4 py-1.5 text-[11px] font-medium text-white backdrop-blur-sm md:text-xs">
-                  {slides[current].badge}
+                  {slide.badge}
                 </span>
               </motion.div>
 
@@ -139,22 +120,22 @@ export default function HeroSlider() {
                 variants={itemVariants}
                 className="mb-4 text-[27px] font-bold leading-[1.35] text-white md:text-[34px] lg:text-[38px]"
               >
-                {slides[current].title}
+                {slide.title}
               </motion.h1>
 
               <motion.p
                 variants={itemVariants}
                 className="mb-6 max-w-[690px] text-[12px] leading-7 text-white/95 md:text-[13px] lg:text-[14px]"
               >
-                {slides[current].description}
+                {slide.description}
               </motion.p>
 
               <motion.div variants={itemVariants}>
                 <Link
-                  href="/donate"
+                  href={hero.buttonHref}
                   className="inline-flex min-w-[142px] items-center justify-center rounded-[7px] bg-[#45bd91] px-6 py-3 text-[13px] font-semibold text-white shadow-md transition-all hover:bg-[#37aa80] hover:-translate-y-0.5"
                 >
-                  تبرع وساهم معنا
+                  {hero.buttonLabel}
                 </Link>
               </motion.div>
             </motion.div>

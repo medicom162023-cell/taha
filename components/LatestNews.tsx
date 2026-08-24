@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useHomepageContent } from '@/components/HomepageContentProvider';
 
 interface Post {
   id: number;
@@ -13,6 +14,7 @@ interface Post {
 }
 
 export default function LatestNews() {
+  const { news } = useHomepageContent();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,10 +60,10 @@ export default function LatestNews() {
     <section className="bg-[#f7faf9] py-16 font-[Alexandria] md:py-20 lg:py-24">
       <div className="mx-auto max-w-[1180px] px-5 md:px-8">
         <div className="mb-10 text-center md:mb-12">
-          <span className="mb-2 block text-sm font-semibold text-[#51c698]">آخر المستجدات</span>
-          <h2 className="text-3xl font-extrabold text-[#003358] md:text-4xl">أخبار الجمعية</h2>
+          <span className="mb-2 block text-sm font-semibold text-[#51c698]">{news.eyebrow}</span>
+          <h2 className="text-3xl font-extrabold text-[#003358] md:text-4xl">{news.title}</h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-gray-500 md:text-base">
-            تابع أحدث أنشطة الجمعية وبرامجها الإنسانية والتنموية في الميدان.
+            {news.description}
           </p>
         </div>
 
