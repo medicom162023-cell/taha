@@ -20,7 +20,7 @@ export default function CommunityImpact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.55 }}
-            className="relative order-1 h-[360px] overflow-hidden rounded-[8px] sm:h-[420px] lg:col-start-1 lg:row-start-1 lg:h-[484px] lg:w-[540px]"
+            className="relative order-1 h-[360px] overflow-hidden rounded-[8px] sm:h-[420px] lg:col-start-1 lg:row-start-1 lg:h-[480px] lg:w-[540px]"
           >
             <Image
               src="/project.png"
@@ -39,7 +39,7 @@ export default function CommunityImpact() {
             dir="rtl"
             className="order-2 text-right lg:col-start-2 lg:row-start-1 lg:pt-[20px]"
           >
-            <span className="mb-[27px] inline-flex flex-col items-start gap-[10px] text-[20px] font-bold leading-[29px] text-[#51c698]">
+            <span className="mb-[27px] inline-flex flex-col items-start gap-[10px] text-[24px] font-bold leading-[34px] text-[#51c698]">
               الإغاثة والتنمية من أجل المجتمع
               <span className="h-[2px] w-[31px] bg-[#00406d]" />
             </span>
@@ -47,21 +47,21 @@ export default function CommunityImpact() {
               نعمل لدعم المجتمعات وتعزيز قدرتها على الصمود
             </h2>
             <p className="mt-[18px] text-[12px] leading-[30px] text-[#707070]">
-              تلتزم جمعية التحالف للإغاثة والتنمية بتقديم استجابات إنسانية فعالة تسهم في التخفيف من آثار الأزمات وتعزيز قدرة المجتمعات على التعافي، عبر برامج صحية وتوعوية وإنسانية تستهدف تحسين الظروف المعيشية والوصول إلى الفئات الأكثر احتياجاً.
+              تلتزم جمعية التحالف للإغاثة والتنمية بتقديم استجابات إنسانية فعالة تسهم في التخفيف من آثار الأزمات الإنسانية وتعزيز قدرة المجتمعات على التعافي. ومن خلال برامج الإغاثة والتنمية، تعمل الجمعية على دعم الفئات الأكثر احتياجاً عبر تنفيذ مبادرات صحية وتوعوية وإنسانية تستهدف تحسين الظروف المعيشية وتعزيز الوعي المجتمعي.
             </p>
 
-            <div className="mt-[14px] space-y-[8px]">
+            <div className="mt-[14px] space-y-[10px]">
               {points.map((point) => (
                 <div key={point} className="flex items-center justify-start gap-[10px]">
                   <span className="h-[7px] w-[7px] flex-none rounded-full bg-[#51c698]" />
-                  <span className="text-[11px] font-normal leading-[18px] text-[#00406d]">{point}</span>
+                  <span className="text-[12px] font-normal leading-[18px] text-[#00406d]">{point}</span>
                 </div>
               ))}
             </div>
 
             <Link
               href="/projects"
-              className="mt-[29px] inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[10px] font-normal text-white transition hover:bg-[#45b287]"
+              className="mt-[29px] inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[12px] font-normal text-white transition hover:bg-[#45b287]"
             >
               شاهد مشاريعنا
             </Link>
