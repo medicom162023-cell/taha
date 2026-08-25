@@ -18,7 +18,9 @@ export default function HeroSlider() {
   }, [slides.length]);
 
   useEffect(() => {
-    const timer = setInterval(() => {\n      if (!document.hidden) nextSlide();\n    }, 8000);
+    const timer = setInterval(() => {
+      if (!document.hidden) nextSlide();
+    }, 8000);
     return () => clearInterval(timer);
   }, [nextSlide]);
 
@@ -44,16 +46,17 @@ export default function HeroSlider() {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.16, delayChildren: 0.2 } },
+    visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
+    hidden: { opacity: 0, y: 14 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
   if (!slides.length) return null;
   const slide = slides[current] || slides[0];
+
   return (
     <section className="relative w-full bg-[#003358] font-[Alexandria]">
       <div className="relative mx-auto flex h-[440px] w-full max-w-[1366px] items-center justify-center overflow-hidden text-center min-[390px]:h-[470px] sm:h-[540px] md:h-[590px] lg:h-[612px]">
@@ -128,7 +131,7 @@ export default function HeroSlider() {
               <motion.div variants={itemVariants}>
                 <Link
                   href={hero.buttonHref}
-                  className="inline-flex min-w-[142px] items-center justify-center rounded-[7px] bg-[#45bd91] px-6 py-3 text-[13px] font-semibold text-white shadow-md transition-all hover:bg-[#37aa80] hover:-translate-y-0.5"
+                  className="inline-flex min-w-[142px] items-center justify-center rounded-[7px] bg-[#45bd91] px-6 py-3 text-[13px] font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[#37aa80]"
                 >
                   {hero.buttonLabel}
                 </Link>
