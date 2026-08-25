@@ -1,9 +1,66 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useHomepageContent } from '@/components/HomepageContentProvider';
+
+function AnimatedNumber({ value }: { value: string }) {
+  const target = Number(value.replace(/[^0-9.]/g, '')) || 0;
+  const prefix = value.match(/^[^0-9]*/)?.[0] ?? '';
+  const suffix = value.match(/[^0-9.]*$/)?.[0] ?? '';
+  const [count, setCount] = useState(0);
+  const numberRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const element = numberRef.current;
+    if (!element) return;
+
+    let frame = 0;
+    let hasStarted = false;
+
+    const startCounting = () => {
+      if (hasStarted) return;
+      hasStarted = true;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setCount(target);
+        return;
+      }
+
+      const duration = 1600;
+      const startedAt = performance.now();
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.round(target * eased));
+        if (progress < 1) frame = requestAnimationFrame(tick);
+      };
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          startCounting();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [target]);
+
+  return <span ref={numberRef}>{prefix}{count}{suffix}</span>;
+}
 
 function StatIcon({ type }: { type: string }) {
   const paths: Record<string, React.ReactNode> = {
@@ -80,7 +137,9 @@ export default function AboutAndStats() {
               <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#51c698]/10 text-[#51c698] transition group-hover:bg-[#51c698] group-hover:text-white">
                 <StatIcon type={stat.icon} />
               </div>
-              <div className="break-words text-xl font-extrabold text-[#003f6b] sm:text-2xl md:text-3xl">{stat.number}</div>
+              <div className="break-words text-xl font-extrabold text-[#003f6b] sm:text-2xl md:text-3xl">
+                <AnimatedNumber value={stat.number} />
+              </div>
               <div className="mt-1 text-xs font-medium text-[#7b8794] md:text-sm">{stat.label}</div>
             </motion.div>
           ))}
