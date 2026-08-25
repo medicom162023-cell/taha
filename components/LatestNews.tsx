@@ -22,7 +22,7 @@ export default function LatestNews() {
   useEffect(() => {
     async function fetchNews() {
       try {
-        const res = await fetch('/api/news');
+        const res = await fetch('/api/news', { cache: 'force-cache' });
         if (!res.ok) throw new Error('فشل جلب الأخبار من الخادم');
         const data: Post[] = await res.json();
         setPosts(data);
@@ -40,7 +40,7 @@ export default function LatestNews() {
 
   if (loading) {
     return (
-      <section className="bg-[#f7faf9] px-5 py-16 text-center font-[Alexandria] text-[#003358] md:py-20">
+      <section className="flex min-h-[620px] items-center justify-center bg-[#f7faf9] px-5 py-16 text-center font-[Alexandria] text-[#003358] md:min-h-[680px] md:py-20">
         جاري تحميل أحدث الأخبار...
       </section>
     );
