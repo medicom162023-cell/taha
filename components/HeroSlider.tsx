@@ -18,7 +18,7 @@ export default function HeroSlider() {
   }, [slides.length]);
 
   useEffect(() => {
-    const timer = setInterval(nextSlide, 8000);
+    const timer = setInterval(() => {\n      if (!document.hidden) nextSlide();\n    }, 8000);
     return () => clearInterval(timer);
   }, [nextSlide]);
 
@@ -33,12 +33,12 @@ export default function HeroSlider() {
     visible: {
       x: '0%',
       opacity: 1,
-      transition: { x: { type: 'spring', stiffness: 220, damping: 25 }, opacity: { duration: 0.5 } },
+      transition: { x: { duration: 0.45, ease: 'easeOut' }, opacity: { duration: 0.35 } },
     },
     exit: (dir: number) => ({
       x: dir > 0 ? '-100%' : '100%',
       opacity: 0,
-      transition: { x: { type: 'spring', stiffness: 220, damping: 25 }, opacity: { duration: 0.5 } },
+      transition: { x: { duration: 0.45, ease: 'easeIn' }, opacity: { duration: 0.35 } },
     }),
   };
 
@@ -67,12 +67,7 @@ export default function HeroSlider() {
             exit="exit"
             className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden px-5 text-center sm:px-8 md:px-16"
           >
-            <motion.div
-              initial={{ scale: 1 }}
-              animate={{ scale: 1.06 }}
-              transition={{ duration: 8, ease: 'easeOut' }}
-              className="absolute inset-0 z-0 h-full w-full"
-            >
+            <div className="absolute inset-0 z-0 h-full w-full">
               <Image
                 src={slide.image}
                 alt={slide.title}
@@ -81,7 +76,7 @@ export default function HeroSlider() {
                 sizes="100vw"
                 className="object-cover object-center"
               />
-            </motion.div>
+            </div>
 
             <div
               className="pointer-events-none absolute inset-0 z-10"
