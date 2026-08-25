@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const database = getAssistanceEnv().ASSISTANCE_DB;
-  if (!database) return Response.json({}, { headers: { 'Cache-Control': 'no-store' } });
+  if (!database) return Response.json({}, { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400' } });
   try {
     const result = await database.prepare('SELECT section_key, content_json FROM homepage_content').all<{ section_key: string; content_json: string }>();
     const content: Partial<HomepageContent> = {};
@@ -14,8 +14,8 @@ export async function GET() {
       if (!isHomepageSection(row.section_key)) continue;
       try { Object.assign(content, { [row.section_key]: JSON.parse(row.content_json) }); } catch { /* retain defaults */ }
     }
-    return Response.json(content, { headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+    return Response.json(content, { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400', 'X-Content-Type-Options': 'nosniff' } });
   } catch {
-    return Response.json({}, { headers: { 'Cache-Control': 'no-store' } });
+    return Response.json({}, { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400' } });
   }
 }
