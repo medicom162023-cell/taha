@@ -9,7 +9,7 @@ export function HomepageContentProvider({ children }: { children: React.ReactNod
   const [content, setContent] = useState(defaultHomepageContent);
   useEffect(() => {
     let active = true;
-    fetch('/api/homepage-content', { cache: 'no-store' })
+    fetch('/api/homepage-content', { cache: 'force-cache' })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!active || !data) return;
