@@ -116,10 +116,6 @@ export default function AboutAndStats() {
             <div className="relative h-[270px] overflow-hidden rounded-[18px] min-[390px]:h-[310px] sm:h-[350px] md:h-[430px] md:rounded-[22px]">
               <Image src={about.image} alt={about.title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#003f6b]/20 to-transparent" />
-              <div className="absolute bottom-3 right-3 max-w-[calc(100%-1.5rem)] rounded-xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:bottom-5 sm:right-5 sm:px-5 sm:py-4">
-                <p className="text-xs font-semibold text-[#51c698]">{about.imageBadge}</p>
-                <p className="mt-1 text-sm font-bold text-[#003f6b]">{about.imageCaption}</p>
-              </div>
             </div>
           </motion.div>
         </div>
