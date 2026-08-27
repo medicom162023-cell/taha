@@ -1,7 +1,8 @@
 import ProjectsGrid from '@/components/ProjectsGrid';
 import { getProjects } from '@/lib/wordpress';
 
-// Projects are progressively revealed in groups of six.\nexport const metadata = {
+// Projects are progressively revealed in groups of six.
+export const metadata = {
   title: 'المشاريع | جمعية التحالف للإغاثة والتنمية',
   description: 'مشاريع وأنشطة جمعية التحالف للإغاثة والتنمية المنشورة على aard.ps.',
 };
