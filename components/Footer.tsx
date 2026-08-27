@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaFacebookF, FaInstagram, FaXTwitter, FaYoutube } from 'react-icons/fa6';
+import { MdEmail } from 'react-icons/md';
 
 const quickLinks = [
   { label: 'الرئيسية', href: '/' },
@@ -9,9 +11,17 @@ const quickLinks = [
   { label: 'تواصل معنا', href: '/contact' },
 ];
 
+const socialLinks = [
+  { label: 'فيسبوك', href: 'https://www.facebook.com/profile.php?id=100067786261535', icon: FaFacebookF },
+  { label: 'إنستغرام', href: 'https://www.instagram.com/aard.ps', icon: FaInstagram },
+  { label: 'البريد الإلكتروني', href: 'mailto:info@aard.ps', icon: MdEmail },
+  { label: 'منصة X', href: 'https://x.com/aardps', icon: FaXTwitter },
+  { label: 'يوتيوب', href: 'https://www.youtube.com/', icon: FaYoutube },
+];
+
 export default function Footer() {
   return (
-    <footer className="bg-[#003f66] font-[Alexandria] text-white">
+    <footer className="bg-[linear-gradient(100deg,#0d7b91_0%,#075878_40%,#003f66_100%)] font-[Alexandria] text-white">
       <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-10 px-5 py-12 sm:px-6 md:grid-cols-2 md:px-8 md:py-14 lg:grid-cols-[1.2fr_0.8fr_1fr] lg:gap-14">
         <div>
           <div className="relative mb-5 h-[72px] w-[154px]">
@@ -48,18 +58,36 @@ export default function Footer() {
             <p>تابع أخبار الجمعية وبرامجها عبر قنواتنا الرسمية.</p>
           </div>
           <Link
-            href="/donate"
+            href="mailto:info@aard.ps?subject=اشتراك في النشرة البريدية"
             className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#51c698] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#45b287]"
           >
-            تبرع الآن
+            اشتراك
           </Link>
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-[1180px] flex-col gap-2 px-5 py-5 text-center text-xs leading-6 text-white/60 sm:px-6 md:flex-row md:items-center md:justify-between md:px-8 md:text-right">
+      <div className="px-5 pb-8 sm:px-6 md:px-8">
+        <div className="mx-auto flex max-w-[1090px] flex-col gap-5 rounded-2xl border border-white/5 bg-white/[0.06] px-6 py-5 text-center text-xs leading-6 text-white/60 md:flex-row md:items-center md:justify-between md:px-10 md:text-right">
           <span>© {new Date().getFullYear()} جمعية التحالف للإغاثة والتنمية. جميع الحقوق محفوظة.</span>
-          <span>Althahaluf Association for Relief &amp; Development</span>
+          <div className="flex items-center justify-center gap-5 text-white" dir="ltr" aria-label="قنوات التواصل الاجتماعي">
+            {socialLinks.map((social) => {
+              const Icon = social.icon;
+              const external = social.href.startsWith('http');
+              return (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  aria-label={social.label}
+                  title={social.label}
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noreferrer' : undefined}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-lg transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-[#51c698]"
+                >
+                  <Icon aria-hidden />
+                </a>
+              );
+            })}
+          </div>
         </div>
       </div>
     </footer>
