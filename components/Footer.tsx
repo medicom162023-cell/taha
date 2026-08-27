@@ -57,12 +57,27 @@ export default function Footer() {
             </a>
             <p>تابع أخبار الجمعية وبرامجها عبر قنواتنا الرسمية.</p>
           </div>
-          <Link
-            href="mailto:info@aard.ps?subject=اشتراك في النشرة البريدية"
-            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#51c698] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#45b287]"
+          <form
+            action="mailto:info@aard.ps"
+            method="get"
+            className="mt-5 flex w-full max-w-sm overflow-hidden rounded-xl bg-white/10"
           >
-            اشتراك
-          </Link>
+            <input type="hidden" name="subject" value="اشتراك في النشرة البريدية" />
+            <input
+              type="email"
+              name="body"
+              required
+              aria-label="البريد الإلكتروني للاشتراك"
+              placeholder="أدخل إيميلك هنا للاشتراك"
+              className="min-h-12 min-w-0 flex-1 bg-transparent px-4 text-sm text-white outline-none placeholder:text-white/45"
+            />
+            <button
+              type="submit"
+              className="min-h-12 shrink-0 bg-[#51c698] px-5 text-sm font-bold text-white transition hover:bg-[#45b287]"
+            >
+              اشتراك
+            </button>
+          </form>
         </div>
       </div>
 
