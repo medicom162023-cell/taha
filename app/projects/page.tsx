@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function ProjectsPage() {
-  const posts = await getProjects(100);
+  const posts = await getProjects(12);
 
   return (
     <main className="bg-white font-[Alexandria]">
