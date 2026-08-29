@@ -117,6 +117,15 @@ export default function LatestNews() {
             );
           })}
         </div>
+
+        <div className="mt-10 flex justify-center md:mt-12">
+          <Link
+            href="/media"
+            className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#51c698] px-8 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#00406d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00406d]"
+          >
+            تصفح باقي الأخبار
+          </Link>
+        </div>
       </div>
     </section>
   );
