@@ -14,7 +14,7 @@ export default async function ProjectsPage() {
       <section className="bg-[#00406d] py-16 text-white md:py-20">
         <div className="mx-auto max-w-[1180px] px-5 md:px-8">
           <span className="mb-3 block text-sm font-semibold text-[#51c698]">برامجنا ومبادراتنا</span>
-          <h1 className="text-3xl font-extrabold md:text-5xl">المشاريع والأنشطة</h1>
+          <h1 className="text-3xl font-extrabold md:text-5xl">المشاريع</h1>
         </div>
       </section>
 
