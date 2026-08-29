@@ -44,13 +44,20 @@ function plainText(html: string) {
     .replace(/&#8211;|&#8212;/g, '—').replace(/&#8230;/g, '…').replace(/\s+/g, ' ').trim();
 }
 
+function firstContentImage(html = '') {
+  const match = html.match(/<img[^>]+(?:src|data-src)=["']([^"']+)["']/i);
+  return match?.[1]?.replace(/&amp;/g, '&') ?? null;
+}
+
 function mapWordPressPost(post: WordPressPost): AardContentItem {
   const terms = post._embedded?.['wp:term']?.flat() ?? [];
   return {
     id: post.id, slug: post.slug, title: plainText(post.title.rendered),
     excerpt: plainText(post.excerpt.rendered), content: post.content?.rendered ?? '',
     date: post.date, modified: post.modified, link: post.link,
-    featured_image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url ?? null,
+    featured_image:
+      post._embedded?.['wp:featuredmedia']?.[0]?.source_url ??
+      firstContentImage(post.content?.rendered),
     categories: terms.map((term) => ({ id: term.id, name: term.name, slug: term.slug })),
   };
 }
