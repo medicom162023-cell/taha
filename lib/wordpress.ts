@@ -1,7 +1,8 @@
 export const WORDPRESS_BASE_URL = 'https://aard.ps';
 export const AARD_API_URL = `${WORDPRESS_BASE_URL}/wp-json/aard/v1`;
 const WORDPRESS_API_URL = `${WORDPRESS_BASE_URL}/wp-json/wp/v2`;
-const PROJECT_CATEGORY_IDS = [41, 40, 37];
+const PROJECT_CATEGORY_IDS = [41, 40];
+const ACTIVITY_CATEGORY_IDS = [37];
 
 export interface AardCategory { id: number; name: string; slug: string; }
 export interface AardContentItem {
@@ -54,16 +55,16 @@ function mapWordPressPost(post: WordPressPost): AardContentItem {
   };
 }
 
-async function fetchProjectPage(page: number) {
+async function fetchCategoryPage(page: number, categoryIds: number[]) {
   const params = new URLSearchParams({
-    categories: PROJECT_CATEGORY_IDS.join(','), per_page: '100', page: String(page),
+    categories: categoryIds.join(','), per_page: '100', page: String(page),
     orderby: 'date', order: 'desc', _embed: '1',
     _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
   });
   const response = await fetch(`${WORDPRESS_API_URL}/posts?${params}`, {
     next: { revalidate: 300 }, headers: { Accept: 'application/json' },
   });
-  if (!response.ok) throw new Error(`WordPress projects request failed: ${response.status}`);
+  if (!response.ok) throw new Error(`WordPress category request failed: ${response.status}`);
   const posts = (await response.json()) as WordPressPost[];
   return { posts, totalPages: Number(response.headers.get('X-WP-TotalPages') || '1') };
 }
@@ -79,15 +80,22 @@ export async function getLatestPosts(perPage = 9) {
 }
 export async function getProjects(limit = 200) {
   try {
-    const first = await fetchProjectPage(1);
+    const first = await fetchCategoryPage(1, PROJECT_CATEGORY_IDS);
     const remaining = await Promise.all(
-      Array.from({ length: Math.max(0, first.totalPages - 1) }, (_, index) => fetchProjectPage(index + 2)),
+      Array.from({ length: Math.max(0, first.totalPages - 1) }, (_, index) => fetchCategoryPage(index + 2, PROJECT_CATEGORY_IDS)),
     );
     return [first, ...remaining].flatMap((result) => result.posts).slice(0, limit).map(mapWordPressPost);
   } catch {
     const data = await aardFetch<AardCollection>(`/projects?per_page=${Math.min(limit, 100)}`);
     return data.items;
   }
+}
+export async function getActivities(limit = 200) {
+  const first = await fetchCategoryPage(1, ACTIVITY_CATEGORY_IDS);
+  const remaining = await Promise.all(
+    Array.from({ length: Math.max(0, first.totalPages - 1) }, (_, index) => fetchCategoryPage(index + 2, ACTIVITY_CATEGORY_IDS)),
+  );
+  return [first, ...remaining].flatMap((result) => result.posts).slice(0, limit).map(mapWordPressPost);
 }
 export async function getNewsBySlug(slug: string) {
   const normalizedSlug = normalizeSlug(slug);
@@ -96,7 +104,12 @@ export async function getNewsBySlug(slug: string) {
     try {
       const data = await aardFetch<AardCollection>('/news?per_page=100');
       return data.items.find((item) => normalizeSlug(item.slug) === normalizedSlug) ?? null;
-    } catch { return null; }
+    } catch {
+      try {
+        const activities = await getActivities();
+        return activities.find((item) => normalizeSlug(item.slug) === normalizedSlug) ?? null;
+      } catch { return null; }
+    }
   }
 }
 export async function getProjectBySlug(slug: string) {
