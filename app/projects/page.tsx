@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
       <section className="py-14 md:py-20">
         <div className="mx-auto max-w-[1180px] px-5 md:px-8">
           {posts.length > 0 ? (
-            <ProjectsGrid posts={posts} />
+            <ProjectsGrid projects={posts} />
           ) : (
             <div className="rounded-2xl bg-[#f7faf9] p-8 text-center text-slate-600">
               لم يتم العثور على مشاريع منشورة في WordPress حالياً.
@@ -32,5 +32,3 @@ export default async function ProjectsPage() {
     </main>
   );
 }
-
-// Cloudflare build trigger after UTF-8 repair.
