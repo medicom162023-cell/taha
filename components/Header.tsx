@@ -1,12 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    function handleScroll() {
+      const currentScrollY = window.scrollY;
+      const difference = currentScrollY - lastScrollY.current;
+
+      if (currentScrollY < 80 || isOpen) {
+        setIsVisible(true);
+      } else if (difference > 8) {
+        setIsVisible(false);
+      } else if (difference < -8) {
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isOpen]);
 
   const navLinks = [
     { name: 'الرئيسية', href: '/' },
@@ -18,7 +40,11 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#edf2f4] bg-white font-[Alexandria]">
+    <header
+      className={`sticky top-0 z-50 w-full border-b border-[#edf2f4] bg-white font-[Alexandria] transition-transform duration-300 ease-out ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
       <div className="mx-auto flex h-[68px] w-full max-w-[1366px] items-center justify-between gap-3 px-4 sm:h-[78px] sm:px-5 md:px-10 lg:px-[84px]">
         <Link href="/" className="flex shrink-0 items-center" aria-label="الصفحة الرئيسية">
           <div className="relative h-[42px] w-[158px] sm:h-[48px] sm:w-[190px] md:w-[220px]">
@@ -46,7 +72,7 @@ export default function Header() {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
-            href="/"
+            href="/donate"
             className="hidden min-w-[112px] items-center justify-center rounded-[7px] bg-[#45bd91] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#37aa80] sm:inline-flex"
           >
             تبرع الآن
@@ -90,7 +116,7 @@ export default function Header() {
               ))}
               <div className="pt-4 sm:hidden">
                 <Link
-                  href="/"
+                  href="/donate"
                   onClick={() => setIsOpen(false)}
                   className="block w-full rounded-lg bg-[#45bd91] py-3 text-center font-semibold text-white"
                 >
