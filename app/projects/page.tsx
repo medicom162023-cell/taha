@@ -32,3 +32,5 @@ export default async function ProjectsPage() {
     </main>
   );
 }
+
+// Cloudflare build trigger after UTF-8 repair.
