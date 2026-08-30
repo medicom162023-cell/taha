@@ -100,7 +100,7 @@ export default function AboutAndStats() {
             <p className="max-w-xl text-sm leading-8 text-[#667085] md:text-[15px]">
               {about.description}
             </p>
-            <Link href={about.buttonHref} className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#51c698] px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#45b287]">
+            <Link href={about.buttonHref} className="mt-7 inline-flex h-[48px] w-[168px] items-center justify-center gap-2 rounded-[8px] bg-[#51c698] text-[14px] font-bold text-white shadow-sm transition hover:bg-[#45b287]">
               {about.buttonLabel}
               <span aria-hidden>←</span>
             </Link>
@@ -116,6 +116,10 @@ export default function AboutAndStats() {
             <div className="relative h-[270px] overflow-hidden rounded-[18px] min-[390px]:h-[310px] sm:h-[350px] md:h-[430px] md:rounded-[22px]">
               <Image src={about.image} alt={about.title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#003f6b]/20 to-transparent" />
+              <div className="absolute bottom-3 right-3 max-w-[calc(100%-1.5rem)] rounded-xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:bottom-5 sm:right-5 sm:px-5 sm:py-4">
+                <p className="text-xs font-semibold text-[#51c698]">{about.imageBadge}</p>
+                <p className="mt-1 text-sm font-bold text-[#003f6b]">{about.imageCaption}</p>
+              </div>
             </div>
           </motion.div>
         </div>
