@@ -145,3 +145,5 @@ export default function Header() {
     </>
   );
 }
+
+// Unified dark hover for primary calls to action.
