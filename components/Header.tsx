@@ -52,8 +52,9 @@ export default function Header() {
   ];
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full border-b border-[#edf2f4] bg-white font-[Alexandria] transition-transform duration-300 ease-out ${
+    <>
+      <header
+      className={`fixed inset-x-0 top-0 z-50 w-full border-b border-[#edf2f4] bg-white font-[Alexandria] shadow-sm transition-transform duration-300 ease-out ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
@@ -139,6 +140,8 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+      </header>
+      <div aria-hidden="true" className="h-[68px] w-full shrink-0 sm:h-[78px]" />
+    </>
   );
 }
