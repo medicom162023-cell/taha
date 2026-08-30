@@ -47,7 +47,7 @@ export default function ProjectsSection() {
         </div>
 
         <div className="mt-[48px] flex justify-center">
-          <Link href={projects.buttonHref} className="inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[10px] font-normal text-white transition hover:bg-[#45b287]">
+          <Link href={projects.buttonHref} className="inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[14px] font-bold text-white shadow-sm transition hover:bg-[#45b287]">
             {projects.buttonLabel}
           </Link>
         </div>
