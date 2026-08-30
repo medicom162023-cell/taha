@@ -57,7 +57,7 @@ export default function CommunityImpact() {
 
             <Link
               href={impact.buttonHref}
-              className="mt-[29px] inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[12px] font-normal text-white transition hover:bg-[#45b287]"
+              className="mt-[29px] inline-flex h-[48px] w-[168px] items-center justify-center rounded-[8px] bg-[#51c698] text-[14px] font-bold text-white shadow-sm transition hover:bg-[#45b287]"
             >
               {impact.buttonLabel}
             </Link>
