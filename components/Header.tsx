@@ -11,23 +11,35 @@ export default function Header() {
   const lastScrollY = useRef(0);
 
   useEffect(() => {
+    function handleWheel(event: WheelEvent) {
+      if (event.deltaY < 0) {
+        setIsVisible(true);
+      } else if (event.deltaY > 0 && window.scrollY >= 80 && !isOpen) {
+        setIsVisible(false);
+      }
+    }
+
     function handleScroll() {
       const currentScrollY = window.scrollY;
       const difference = currentScrollY - lastScrollY.current;
 
       if (currentScrollY < 80 || isOpen) {
         setIsVisible(true);
-      } else if (difference > 8) {
+      } else if (difference > 2) {
         setIsVisible(false);
-      } else if (difference < -8) {
+      } else if (difference < -2) {
         setIsVisible(true);
       }
 
       lastScrollY.current = currentScrollY;
     }
 
+    window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [isOpen]);
 
   const navLinks = [
