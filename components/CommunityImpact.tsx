@@ -67,3 +67,5 @@ export default function CommunityImpact() {
     </section>
   );
 }
+
+// Unified homepage call-to-action sizing.
