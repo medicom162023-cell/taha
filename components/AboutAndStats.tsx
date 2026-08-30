@@ -100,7 +100,7 @@ export default function AboutAndStats() {
             <p className="max-w-xl text-sm leading-8 text-[#667085] md:text-[15px]">
               {about.description}
             </p>
-            <Link href={about.buttonHref} className="mt-7 inline-flex h-[48px] w-[168px] items-center justify-center gap-2 rounded-[8px] bg-[#51c698] text-[14px] font-bold text-white shadow-sm transition hover:bg-[#45b287]">
+            <Link href={about.buttonHref} className="mt-7 inline-flex h-[48px] w-[168px] items-center justify-center gap-2 rounded-[8px] bg-[#51c698] text-[14px] font-bold text-white shadow-sm transition duration-300 hover:bg-[#00406d] hover:shadow-lg">
               {about.buttonLabel}
               <span aria-hidden>←</span>
             </Link>
