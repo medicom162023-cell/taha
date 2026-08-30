@@ -86,7 +86,7 @@ export default function Header() {
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
             href="/donate"
-            className="hidden min-w-[112px] items-center justify-center rounded-[7px] bg-[#45bd91] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#37aa80] sm:inline-flex"
+            className="hidden min-w-[112px] items-center justify-center rounded-[7px] bg-[#45bd91] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition duration-300 hover:bg-[#00406d] hover:shadow-lg sm:inline-flex"
           >
             تبرع الآن
           </Link>
@@ -131,7 +131,7 @@ export default function Header() {
                 <Link
                   href="/donate"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full rounded-lg bg-[#45bd91] py-3 text-center font-semibold text-white"
+                  className="block w-full rounded-lg bg-[#45bd91] py-3 text-center font-semibold text-white shadow-sm transition duration-300 hover:bg-[#00406d] hover:shadow-lg"
                 >
                   تبرع الآن
                 </Link>
