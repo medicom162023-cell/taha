@@ -21,7 +21,7 @@ export default function AidRegistration() {
         </div>
         <Link
           href={assistance.buttonHref}
-          className="inline-flex h-14 w-full max-w-[220px] shrink-0 items-center justify-center rounded-lg bg-[#51c698] text-base font-bold text-white transition hover:bg-[#45b287] sm:w-[168px] md:h-16"
+          className="inline-flex h-14 w-full max-w-[220px] shrink-0 items-center justify-center rounded-lg bg-[#51c698] text-base font-bold text-white shadow-sm transition duration-300 hover:bg-[#00406d] hover:shadow-lg sm:w-[168px] md:h-16"
         >
           {assistance.buttonLabel}
         </Link>
