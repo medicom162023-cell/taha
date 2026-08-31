@@ -85,6 +85,25 @@ export async function getLatestPosts(perPage = 9) {
   const data = await aardFetch<AardCollection>(`/news?per_page=${perPage}`);
   return data.items;
 }
+export async function getPostBySlug(slug: string) {
+  const params = new URLSearchParams({
+    slug: normalizeSlug(slug),
+    status: 'publish',
+    _embed: '1',
+  });
+
+  try {
+    const response = await fetch(`${WORDPRESS_API_URL}/posts?${params}`, {
+      next: { revalidate: 300 },
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) return null;
+    const posts = (await response.json()) as WordPressPost[];
+    return posts[0] ? mapWordPressPost(posts[0]) : null;
+  } catch {
+    return null;
+  }
+}
 export async function getProjects(limit = 200) {
   try {
     const first = await fetchCategoryPage(1, PROJECT_CATEGORY_IDS);
@@ -106,6 +125,8 @@ export async function getActivities(limit = 200) {
 }
 export async function getNewsBySlug(slug: string) {
   const normalizedSlug = normalizeSlug(slug);
+  const directPost = await getPostBySlug(normalizedSlug);
+  if (directPost) return directPost;
   try { return await aardFetch<AardContentItem>(`/news/${encodeURIComponent(normalizedSlug)}`); }
   catch {
     try {
