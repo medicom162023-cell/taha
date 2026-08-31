@@ -48,7 +48,7 @@ export const defaultHomepageContent: HomepageContent = {
   news: { eyebrow: 'آخر المستجدات', title: 'أخبار الجمعية', description: 'تابع أحدث أنشطة الجمعية وبرامجها الإنسانية والتنموية في الميدان.' },
   partners: {
     eyebrow: 'شركاء النجاح', title: 'شركاؤنا في العطاء', description: 'نعتز بالشراكات التي توسّع أثر برامجنا الإنسانية والتنموية وتساعدنا على الوصول إلى الفئات الأكثر احتياجاً بكفاءة واستدامة.',
-    items: [{ name: 'UNDP', logo: '/partners/undp.png' }, { name: 'البنك الإسلامي للتنمية', logo: '/partners/isdb.png' }, { name: 'Kuwait Fund', logo: '/partners/kuwait-fund.png' }, { name: 'BADEA', logo: '/partners/badea.png' }, { name: 'الصندوق العربي للإنماء الاقتصادي والاجتماعي', logo: '/partners/arab-fund.png' }, { name: 'البنك الإسلامي للتنمية', logo: '/partners/isdb.png' }],
+    items: [{ name: 'UNDP', logo: '/partners/undp.png' }, { name: 'البنك الإسلامي للتنمية', logo: '/partners/isdb.png' }, { name: 'Kuwait Fund', logo: '/partners/kuwait-fund.png' }, { name: 'BADEA', logo: '/partners/badea.png' }, { name: 'الصندوق العربي للإنماء الاقتصادي والاجتماعي', logo: '/partners/arab-fund.png' }, { name: 'البنك الإسلامي للتنمية', logo: '/partners/isdb.png' }, { name: 'شبكة المنظمات الأهلية الفلسطينية (PNGO)', logo: '/partners/pngo.webp' }],
     buttonLabel: 'كن شريكاً معنا', buttonHref: '/contact',
   },
   assistance: { title: 'التسجيل للمساعدات', description: 'استمارة تسجيل أسرة للاستفادة من المساعدات المقدمة من جمعية التحالف للإغاثة والتنمية', buttonLabel: 'سجل الآن', buttonHref: '/assistance-registration' },

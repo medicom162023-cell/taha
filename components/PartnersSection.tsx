@@ -5,6 +5,9 @@ import { useHomepageContent } from '@/components/HomepageContentProvider';
 
 export default function PartnersSection() {
   const { partners } = useHomepageContent();
+  const partnerItems = partners.items.some((partner) => partner.logo === '/partners/pngo.webp')
+    ? partners.items
+    : [...partners.items, { name: 'شبكة المنظمات الأهلية الفلسطينية (PNGO)', logo: '/partners/pngo.webp' }];
   return (
     <section className="bg-[#f7faf9] py-16 font-[Alexandria] md:py-20">
       <div className="mx-auto max-w-[1180px] px-5 md:px-8">
@@ -16,8 +19,8 @@ export default function PartnersSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {partners.items.map((partner, index) => (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-7">
+          {partnerItems.map((partner, index) => (
             <div
               key={`${partner.name}-${index}`}
               className="flex min-h-24 min-w-0 items-center justify-center rounded-2xl border border-[#e9f1ee] bg-white px-2 text-center text-sm font-bold text-[#5b7180] shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#51c698]/40 hover:text-[#00406d] hover:shadow-md sm:min-h-28 sm:px-4"
