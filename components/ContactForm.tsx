@@ -34,7 +34,7 @@ export default function ContactForm() {
         <input name="name" required maxLength={120} autoComplete="name" placeholder="الاسم" aria-label="الاسم" className={inputClass} />
         <input name="email" type="email" required maxLength={160} autoComplete="email" placeholder="البريد الإلكتروني" aria-label="البريد الإلكتروني" className={inputClass} dir="rtl" />
       </div>
-      <textarea name="details" required maxLength={2000} placeholder="التفاصيل" aria-label="التفاصيل" className={`${inputClass} min-h-[195px] resize-y py-5`} />
+      <textarea name="details" required maxLength={180} placeholder="التفاصيل" aria-label="التفاصيل" className={`${inputClass} min-h-[195px] resize-y py-5`} />
       {status.message && <p role="status" className={`px-1 text-xs leading-6 ${status.kind === 'success' ? 'text-emerald-700' : status.kind === 'error' ? 'text-red-700' : 'text-[#00406d]'}`}>{status.message}</p>}
       <button type="submit" disabled={status.kind === 'loading'} className="min-h-[54px] w-full bg-[#082b4b] px-6 text-sm font-semibold text-white transition duration-300 hover:bg-[#51c698] disabled:cursor-wait disabled:opacity-60">{status.kind === 'loading' ? 'جارٍ الإرسال...' : 'إرسال'}</button>
     </form>
