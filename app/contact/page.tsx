@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import ContactForm from '@/components/ContactForm';
 
 export const metadata = {
@@ -67,7 +68,22 @@ export default function ContactPage() {
       </section>
 
       <section className="relative overflow-hidden bg-[linear-gradient(110deg,#fff_55%,#e5faf2)] px-5 py-14 text-center md:py-[52px]">
-        <div className="pointer-events-none absolute -right-5 top-12 h-20 w-20 rounded-full border-[18px] border-[#51c698]/10" />
+        <Image
+          src="/contact-donation-mark.png"
+          alt=""
+          width={74}
+          height={81}
+          aria-hidden="true"
+          className="pointer-events-none absolute right-4 top-[72px] w-[46px] opacity-[0.14] md:right-[18px] md:top-[76px]"
+        />
+        <Image
+          src="/contact-donation-mark.png"
+          alt=""
+          width={74}
+          height={81}
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-2 top-[146px] w-[27px] opacity-[0.11] md:-right-1 md:top-[151px]"
+        />
         <h2 className="text-2xl font-extrabold text-[#51c698]">تبرعك يصنع فرقاً حقيقياً</h2>
         <p className="mt-4 text-sm leading-7 text-[#7b7b7b]">بدعمك نستطيع الاستجابة للاحتياجات الإنسانية وتقديم المساعدة للأسر الأكثر احتياجاً في قطاع غزة</p>
         <Link href="/donate" className="mt-5 inline-flex min-h-[42px] min-w-[168px] items-center justify-center rounded-[7px] bg-[#51c698] px-6 text-xs font-semibold text-white transition duration-300 hover:bg-[#00406d] hover:shadow-lg">تبرع الآن</Link>
