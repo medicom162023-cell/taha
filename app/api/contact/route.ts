@@ -1,11 +1,10 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-
 export const runtime = 'nodejs';
 
-type OutgoingEmail = { readonly from: string; readonly to: string };
-type EmailBinding = { send(message: OutgoingEmail): Promise<void> };
 type Submission = { name?: unknown; email?: unknown; details?: unknown; website?: unknown; startedAt?: unknown };
-const RECIPIENT = 'Info@aard.ps';
+type ContactPagePayload = { content?: string };
+
+const CONTACT_PAGE_API = 'https://aard.ps/wp-json/aard/v1/pages/contact-us-form';
+const FORMINATOR_ENDPOINT = 'https://aard.ps/wp-admin/admin-ajax.php';
 
 function clean(value: unknown, max: number) {
   if (typeof value !== 'string') return null;
@@ -17,11 +16,8 @@ function json(message: string, status: number) {
   return Response.json({ message }, { status, headers: { 'Cache-Control': 'no-store' } });
 }
 
-function encodeHeader(value: string) {
-  const bytes = new TextEncoder().encode(value);
-  let binary = '';
-  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
-  return `=?UTF-8?B?${btoa(binary)}?=`;
+function extract(html: string, pattern: RegExp) {
+  return html.match(pattern)?.[1] || '';
 }
 
 export async function POST(request: Request) {
@@ -41,25 +37,38 @@ export async function POST(request: Request) {
 
   const name = clean(body.name, 120);
   const email = clean(body.email, 160);
-  const details = clean(body.details, 2000);
-  if (!name || !email || !details || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json('يرجى التأكد من الاسم والبريد الإلكتروني والتفاصيل.', 422);
+  const details = clean(body.details, 180);
+  if (!name || !email || !details || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json('يرجى التأكد من الاسم والبريد الإلكتروني والتفاصيل (بحد أقصى 180 حرفًا).', 422);
 
   try {
-    const { env } = getCloudflareContext();
-    const binding = (env as unknown as { CONTACT_EMAIL?: EmailBinding }).CONTACT_EMAIL;
-    if (!binding) return json('خدمة الإرسال غير متاحة مؤقتًا.', 503);
-    const subject = `رسالة جديدة من صفحة تواصل معنا — ${name}`;
-    const raw = [
-      'From: AARD Website <noreply@aard.ps>', `To: ${RECIPIENT}`, `Reply-To: ${email}`,
-      `Subject: ${encodeHeader(subject)}`, 'MIME-Version: 1.0', 'Content-Type: text/plain; charset=UTF-8',
-      'Content-Transfer-Encoding: 8bit', '', `الاسم: ${name}`, `البريد الإلكتروني: ${email}`, '',
-      'التفاصيل:', details, '', `وقت الإرسال: ${new Date().toISOString()}`,
-    ].join('\r\n');
-    const { EmailMessage } = await import('cloudflare:email');
-    await binding.send(new EmailMessage('noreply@aard.ps', RECIPIENT, raw));
-    return json('تم إرسال رسالتك بنجاح، وسنتواصل معك في أقرب وقت.', 200);
+    const pageResponse = await fetch(CONTACT_PAGE_API, { cache: 'no-store', headers: { Accept: 'application/json' } });
+    if (!pageResponse.ok) throw new Error(`Contact form configuration: ${pageResponse.status}`);
+    const page = await pageResponse.json() as ContactPagePayload;
+    const html = page.content || '';
+    const nonce = extract(html, /name=["']forminator_nonce["'][^>]*value=["']([^"']+)/i);
+    const formId = extract(html, /name=["']form_id["'][^>]*value=["']([^"']+)/i) || '2344';
+    if (!nonce) throw new Error('Contact form nonce unavailable');
+
+    const form = new FormData();
+    form.set('action', 'forminator_submit_form_custom-forms');
+    form.set('forminator_nonce', nonce);
+    form.set('form_id', formId);
+    form.set('form_type', 'default');
+    form.set('render_id', '0');
+    form.set('page_id', '0');
+    form.set('current_url', 'https://aard.ps/contact');
+    form.set('referer_url', 'https://aard.ps/contact');
+    form.set('name-1', name);
+    form.set('email-1', email);
+    form.set('phone-1', '0097282856668');
+    form.set('textarea-1', details);
+
+    const resultResponse = await fetch(FORMINATOR_ENDPOINT, { method: 'POST', body: form, headers: { Accept: 'application/json' } });
+    const result = await resultResponse.json().catch(() => null) as { success?: boolean; data?: { message?: string } } | null;
+    if (!resultResponse.ok || !result?.success) throw new Error(result?.data?.message || `Form submission: ${resultResponse.status}`);
+    return json('تم إرسال رسالتك بنجاح إلى Info@aard.ps، وسنتواصل معك في أقرب وقت.', 200);
   } catch (error) {
-    console.error('Contact email failed', error);
-    return json('تعذر إرسال الرسالة حاليًا. يرجى المحاولة لاحقًا.', 500);
+    console.error('Contact form submission failed', error);
+    return json('تعذر إرسال الرسالة حاليًا. يرجى المحاولة لاحقًا أو مراسلتنا على Info@aard.ps.', 502);
   }
 }
