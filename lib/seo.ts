@@ -74,20 +74,6 @@ function titleValue(head: string) {
   return match?.[1] ? decodeEntities(match[1].replace(/<[^>]*>/g, ' ')) : undefined;
 }
 
-function canonicalValue(head: string) {
-  const tags = head.match(/<link\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi) ?? [];
-
-  for (const tag of tags) {
-    const rel = getAttribute(tag, 'rel')?.toLowerCase().split(/\s+/) ?? [];
-    if (!rel.includes('canonical')) continue;
-
-    const href = getAttribute(tag, 'href');
-    if (href) return href;
-  }
-
-  return undefined;
-}
-
 function absoluteUrl(value?: string) {
   if (!value) return undefined;
 
@@ -128,12 +114,12 @@ export async function buildRankMathMetadata(sourceUrl: string, fallback: SeoFall
 
   const title = titleValue(head) ?? metaValue(head, 'og:title') ?? fallback.title;
   const description = metaValue(head, 'description') ?? metaValue(head, 'og:description') ?? fallback.description;
-  const canonical = absoluteUrl(canonicalValue(head)) ?? fallback.canonical;
+  const canonical = fallback.canonical;
   const robots = metaValue(head, 'robots');
 
   const ogTitle = metaValue(head, 'og:title') ?? title;
   const ogDescription = metaValue(head, 'og:description') ?? description;
-  const ogUrl = absoluteUrl(metaValue(head, 'og:url')) ?? canonical;
+  const ogUrl = canonical;
   const ogSiteName = metaValue(head, 'og:site_name') ?? 'جمعية التحالف للإغاثة والتنمية';
   const ogTypeRaw = metaValue(head, 'og:type');
   const ogType = ogTypeRaw === 'article' || ogTypeRaw === 'website' ? ogTypeRaw : (fallback.type ?? 'website');
@@ -185,7 +171,34 @@ export async function buildRankMathMetadata(sourceUrl: string, fallback: SeoFall
   };
 }
 
-export async function getRankMathSchemas(sourceUrl: string) {
+function replaceSourceUrl(value: string, sourceUrl: string, publicUrl: string) {
+  const source = sourceUrl.replace(/\/+$/, '');
+  const target = publicUrl.replace(/\/+$/, '');
+
+  if (!source || source === target) return value;
+
+  return value
+    .split(`${source}/`).join(`${target}/`)
+    .split(source).join(target);
+}
+
+function rewriteSchemaUrls(value: unknown, sourceUrl: string, publicUrl: string): unknown {
+  if (typeof value === 'string') return replaceSourceUrl(value, sourceUrl, publicUrl);
+  if (Array.isArray(value)) return value.map((item) => rewriteSchemaUrls(item, sourceUrl, publicUrl));
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, item]) => [
+        key,
+        rewriteSchemaUrls(item, sourceUrl, publicUrl),
+      ]),
+    );
+  }
+
+  return value;
+}
+
+export async function getRankMathSchemas(sourceUrl: string, publicUrl = sourceUrl) {
   const head = await fetchRankMathHead(sourceUrl);
   if (!head) return [];
 
@@ -201,9 +214,11 @@ export async function getRankMathSchemas(sourceUrl: string) {
     if (!json) continue;
 
     try {
-      schemas.push(JSON.stringify(JSON.parse(json)));
+      const parsed = JSON.parse(json) as unknown;
+      const rewritten = rewriteSchemaUrls(parsed, sourceUrl, publicUrl);
+      schemas.push(JSON.stringify(rewritten));
     } catch {
-      schemas.push(json);
+      schemas.push(replaceSourceUrl(json, sourceUrl, publicUrl));
     }
   }
 
