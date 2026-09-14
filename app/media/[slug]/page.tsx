@@ -29,7 +29,8 @@ export default async function NewsDetailPage({ params }: PageProps) {
 
   if (!post) notFound();
 
-  const schemas = await getRankMathSchemas(post.link);
+  const canonical = `${WORDPRESS_BASE_URL}/media/${encodeURIComponent(post.slug)}`;
+  const schemas = await getRankMathSchemas(post.link, canonical);
 
   return (
     <>
