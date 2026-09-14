@@ -29,7 +29,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   if (!project) notFound();
 
-  const schemas = await getRankMathSchemas(project.link);
+  const canonical = `${WORDPRESS_BASE_URL}/projects/${encodeURIComponent(project.slug)}`;
+  const schemas = await getRankMathSchemas(project.link, canonical);
 
   return (
     <>
