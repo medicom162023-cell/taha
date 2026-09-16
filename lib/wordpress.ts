@@ -33,7 +33,7 @@ async function aardFetch<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-function normalizeSlug(value: string) {
+export function normalizeSlug(value: string) {
   let decoded = value;
   try { decoded = decodeURIComponent(value); } catch { /* Keep original value. */ }
   return decoded.normalize('NFC').replace(/^\/+|\/+$/g, '');
