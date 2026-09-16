@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useHomepageContent } from '@/components/HomepageContentProvider';
+import { encodeNormalizedSlug } from '@/lib/slug';
 
 interface Post {
   id: number;
@@ -106,7 +107,7 @@ export default function LatestNews() {
                   </p>
 
                   <Link
-                    href={`/media/${post.slug}`}
+                    href={`/media/${encodeNormalizedSlug(post.slug)}`}
                     className="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#45b287] transition hover:text-[#00406d]"
                   >
                     اقرأ التفاصيل

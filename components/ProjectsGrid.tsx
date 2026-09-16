@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { AardContentItem } from '@/lib/wordpress';
+import { encodeNormalizedSlug } from '@/lib/slug';
 
 const PROJECTS_PER_STEP = 6;
 
@@ -33,7 +34,7 @@ export default function ProjectsGrid({ projects }: { projects: AardContentItem[]
               </h2>
               <p className="mb-5 line-clamp-3 text-sm leading-7 text-slate-600">{project.excerpt}</p>
               <Link
-                href={`/projects/${project.slug}`}
+                href={`/projects/${encodeNormalizedSlug(project.slug)}`}
                 className="text-sm font-bold text-[#45bd91] transition hover:text-[#00406d]"
               >
                 تفاصيل المشروع ←

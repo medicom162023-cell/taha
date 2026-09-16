@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { AardContentItem } from '@/lib/wordpress';
+import { encodeNormalizedSlug } from '@/lib/slug';
 
 const ITEMS_PER_STEP = 6;
 
@@ -24,7 +25,7 @@ export default function MediaGrid({ posts }: { posts: AardContentItem[] }) {
               </div>
               <h2 className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#00406d]">{post.title}</h2>
               <p className="mb-5 line-clamp-3 text-sm leading-7 text-slate-600">{post.excerpt}</p>
-              <Link href={`/media/${post.slug}`} className="text-sm font-bold text-[#45bd91] transition hover:text-[#00406d]">اقرأ المزيد ←</Link>
+              <Link href={`/media/${encodeNormalizedSlug(post.slug)}`} className="text-sm font-bold text-[#45bd91] transition hover:text-[#00406d]">اقرأ المزيد ←</Link>
             </div>
           </article>
         ))}

@@ -1,3 +1,6 @@
+import { normalizeSlug } from '@/lib/slug';
+export { normalizeSlug } from '@/lib/slug';
+
 export const WORDPRESS_BASE_URL = 'https://aard.ps';
 export const AARD_API_URL = `${WORDPRESS_BASE_URL}/wp-json/aard/v1`;
 const WORDPRESS_API_URL = `${WORDPRESS_BASE_URL}/wp-json/wp/v2`;
@@ -31,12 +34,6 @@ async function aardFetch<T>(path: string): Promise<T> {
   });
   if (!response.ok) throw new Error(`AARD API request failed: ${response.status}`);
   return response.json() as Promise<T>;
-}
-
-export function normalizeSlug(value: string) {
-  let decoded = value;
-  try { decoded = decodeURIComponent(value); } catch { /* Keep original value. */ }
-  return decoded.normalize('NFC').replace(/^\/+|\/+$/g, '');
 }
 
 function plainText(html: string) {
