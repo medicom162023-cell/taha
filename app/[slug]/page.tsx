@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import WpContent from '@/components/WpContent';
 import { buildRankMathMetadata, getRankMathSchemas, safeJsonLd } from '@/lib/seo';
 import { getPostBySlug, WORDPRESS_BASE_URL } from '@/lib/wordpress';
@@ -29,6 +29,8 @@ export default async function LegacyWordPressPostPage({ params }: PageProps) {
   const post = await getPostBySlug(slug);
 
   if (!post) notFound();
+
+  permanentRedirect(`/media/${encodeNormalizedSlug(post.slug)}`);
 
   const schemas = await getRankMathSchemas(post.link);
 
