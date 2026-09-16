@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { normalizeSlug } from '@/lib/slug';
 export { normalizeSlug } from '@/lib/slug';
 
@@ -147,3 +148,30 @@ export async function getProjectBySlug(slug: string) {
     } catch { return null; }
   }
 }
+
+// Fetch the complete published archive; never silently truncate older posts.
+export const getAllPublishedPosts = cache(async (): Promise<AardContentItem[]> => {
+  const posts = new Map<number, AardContentItem>();
+  let totalPages = 1;
+  for (let page = 1; page <= totalPages; page++) {
+    const params = new URLSearchParams({
+      status: 'publish', per_page: '25', page: String(page),
+      orderby: 'id', order: 'asc', _embed: '1',
+      _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
+    });
+    const response = await fetch(`${WORDPRESS_API_URL}/posts?${params}`, {
+      next: { revalidate: 300 }, headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) throw new Error(`WordPress archive request failed: ${response.status}`);
+    const pages = Number(response.headers.get('X-WP-TotalPages'));
+    if (!Number.isSafeInteger(pages) || pages < 0 || !response.headers.has('X-WP-TotalPages')) {
+      throw new Error('WordPress archive pagination headers are missing or invalid');
+    }
+    totalPages = pages;
+    const items = (await response.json()) as WordPressPost[];
+    for (const post of items) posts.set(post.id, mapWordPressPost(post));
+  }
+  return [...posts.values()].sort((a, b) =>
+    new Date(b.date).getTime() - new Date(a.date).getTime() || b.id - a.id,
+  );
+});
