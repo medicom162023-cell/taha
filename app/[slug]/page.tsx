@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import WpContent from '@/components/WpContent';
 import { buildRankMathMetadata, getRankMathSchemas, safeJsonLd } from '@/lib/seo';
-import { getPostBySlug, WORDPRESS_BASE_URL } from '@/lib/wordpress';
+import { getPostBySlug, normalizeSlug, WORDPRESS_BASE_URL } from '@/lib/wordpress';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!post) return {};
 
-  const canonical = `${WORDPRESS_BASE_URL}/${encodeURIComponent(post.slug)}`;
+  const canonical = `${WORDPRESS_BASE_URL}/${encodeURIComponent(normalizeSlug(post.slug))}`;
 
   return buildRankMathMetadata(post.link, {
     title: `${post.title} | جمعية التحالف للإغاثة والتنمية`,
