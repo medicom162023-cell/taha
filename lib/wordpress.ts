@@ -1,4 +1,3 @@
-import { cache } from 'react';
 import { normalizeSlug } from '@/lib/slug';
 export { normalizeSlug } from '@/lib/slug';
 
@@ -150,7 +149,7 @@ export async function getProjectBySlug(slug: string) {
 }
 
 // Fetch the complete published archive; never silently truncate older posts.
-export const getAllPublishedPosts = cache(async (): Promise<AardContentItem[]> => {
+export async function getAllPublishedPosts(): Promise<AardContentItem[]> {
   const posts = new Map<number, AardContentItem>();
   let totalPages = 1;
   for (let page = 1; page <= totalPages; page++) {
@@ -174,4 +173,4 @@ export const getAllPublishedPosts = cache(async (): Promise<AardContentItem[]> =
   return [...posts.values()].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime() || b.id - a.id,
   );
-});
+}
