@@ -1,15 +1,11 @@
+import { publicWordPressFetch } from '@/lib/public-wordpress-fetch';
 import { NextResponse } from 'next/server';
 
 const AARD_NEWS_URL = 'https://aard.ps/wp-json/aard/v1/news?per_page=3';
 
 export async function GET() {
   try {
-    const res = await fetch(AARD_NEWS_URL, {
-      next: { revalidate: 300 },
-      headers: {
-        Accept: 'application/json',
-      },
-    });
+    const res = await publicWordPressFetch(AARD_NEWS_URL);
 
     if (!res.ok) {
       return NextResponse.json(

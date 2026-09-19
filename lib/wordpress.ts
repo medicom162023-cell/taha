@@ -1,3 +1,5 @@
+import { cache } from 'react';
+import { publicWordPressFetch } from '@/lib/public-wordpress-fetch';
 import { normalizeSlug } from '@/lib/slug';
 export { normalizeSlug } from '@/lib/slug';
 
@@ -31,9 +33,7 @@ interface WordPressPost {
 }
 
 async function aardFetch<T>(path: string): Promise<T> {
-  const response = await fetch(`${AARD_API_URL}${path}`, {
-    next: { revalidate: 300 }, headers: { Accept: 'application/json' },
-  });
+  const response = await publicWordPressFetch(`${AARD_API_URL}${path}`);
   if (!response.ok) throw new Error(`AARD API request failed: ${response.status}`);
   return response.json() as Promise<T>;
 }
@@ -67,9 +67,7 @@ async function fetchCategoryPage(page: number, categoryIds: number[]) {
     orderby: 'date', order: 'desc', _embed: '1',
     _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
   });
-  const response = await fetch(`${WORDPRESS_API_URL}/posts?${params}`, {
-    next: { revalidate: 300 }, headers: { Accept: 'application/json' },
-  });
+  const response = await publicWordPressFetch(`${WORDPRESS_API_URL}/posts?${params}`);
   if (!response.ok) throw new Error(`WordPress category request failed: ${response.status}`);
   const posts = (await response.json()) as WordPressPost[];
   return { posts, totalPages: Number(response.headers.get('X-WP-TotalPages') || '1') };
@@ -92,10 +90,7 @@ export async function getPostBySlug(slug: string) {
   });
 
   try {
-    const response = await fetch(`${WORDPRESS_API_URL}/posts?${params}`, {
-      next: { revalidate: 300 },
-      headers: { Accept: 'application/json' },
-    });
+    const response = await publicWordPressFetch(`${WORDPRESS_API_URL}/posts?${params}`);
     if (!response.ok) return null;
     const posts = (await response.json()) as WordPressPost[];
     return posts[0] ? mapWordPressPost(posts[0]) : null;
@@ -151,29 +146,35 @@ export async function getProjectBySlug(slug: string) {
 }
 
 // Fetch the complete news/activity archive, including explicitly cross-categorized projects.
-export async function getAllMediaPosts(): Promise<AardContentItem[]> {
-  const posts = new Map<number, AardContentItem>();
-  let totalPages = 1;
-  for (let page = 1; page <= totalPages; page++) {
+export const getAllMediaPosts = cache(async (): Promise<AardContentItem[]> => {
+  async function fetchPage(page: number) {
     const params = new URLSearchParams({
       status: 'publish', per_page: '25', page: String(page),
       categories: MEDIA_CATEGORY_IDS.join(','),
       orderby: 'id', order: 'asc', _embed: '1',
       _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
     });
-    const response = await fetch(`${WORDPRESS_API_URL}/posts?${params}`, {
-      next: { revalidate: 300 }, headers: { Accept: 'application/json' },
-    });
+    const response = await publicWordPressFetch(`${WORDPRESS_API_URL}/posts?${params}`);
     if (!response.ok) throw new Error(`WordPress archive request failed: ${response.status}`);
-    const pages = Number(response.headers.get('X-WP-TotalPages'));
-    if (!Number.isSafeInteger(pages) || pages < 0 || !response.headers.has('X-WP-TotalPages')) {
+    const totalPages = Number(response.headers.get('X-WP-TotalPages'));
+    if (!Number.isSafeInteger(totalPages) || totalPages < 0 || !response.headers.has('X-WP-TotalPages')) {
       throw new Error('WordPress archive pagination headers are missing or invalid');
     }
-    totalPages = pages;
-    const items = (await response.json()) as WordPressPost[];
-    for (const post of items) posts.set(post.id, mapWordPressPost(post));
+    return { items: (await response.json()) as WordPressPost[], totalPages };
+  }
+
+  const first = await fetchPage(1);
+  const posts = new Map(first.items.map(post => [post.id, mapWordPressPost(post)]));
+  // Bound concurrency to avoid flooding WordPress on a cold cache.
+  for (let page = 2; page <= first.totalPages; page += 4) {
+    const batch = await Promise.all(
+      Array.from({ length: Math.min(4, first.totalPages - page + 1) }, (_, i) => fetchPage(page + i)),
+    );
+    for (const result of batch) {
+      for (const post of result.items) posts.set(post.id, mapWordPressPost(post));
+    }
   }
   return [...posts.values()].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime() || b.id - a.id,
   );
-}
+});
