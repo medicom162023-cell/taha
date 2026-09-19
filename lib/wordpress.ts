@@ -6,6 +6,8 @@ export const AARD_API_URL = `${WORDPRESS_BASE_URL}/wp-json/aard/v1`;
 const WORDPRESS_API_URL = `${WORDPRESS_BASE_URL}/wp-json/wp/v2`;
 const PROJECT_CATEGORY_IDS = [41, 40];
 const ACTIVITY_CATEGORY_IDS = [37];
+// Editorial membership is explicit: project-only posts do not belong in media.
+const MEDIA_CATEGORY_IDS = [6, ...ACTIVITY_CATEGORY_IDS];
 
 export interface AardCategory { id: number; name: string; slug: string; }
 export interface AardContentItem {
@@ -148,13 +150,14 @@ export async function getProjectBySlug(slug: string) {
   }
 }
 
-// Fetch the complete published archive; never silently truncate older posts.
-export async function getAllPublishedPosts(): Promise<AardContentItem[]> {
+// Fetch the complete news/activity archive, including explicitly cross-categorized projects.
+export async function getAllMediaPosts(): Promise<AardContentItem[]> {
   const posts = new Map<number, AardContentItem>();
   let totalPages = 1;
   for (let page = 1; page <= totalPages; page++) {
     const params = new URLSearchParams({
       status: 'publish', per_page: '25', page: String(page),
+      categories: MEDIA_CATEGORY_IDS.join(','),
       orderby: 'id', order: 'asc', _embed: '1',
       _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
     });

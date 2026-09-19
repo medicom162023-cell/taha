@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import MediaGrid from '@/components/MediaGrid';
-import { getAllPublishedPosts, WORDPRESS_BASE_URL } from '@/lib/wordpress';
+import { getAllMediaPosts, WORDPRESS_BASE_URL } from '@/lib/wordpress';
 
 const PAGE_SIZE = 12;
 type PageProps = { searchParams: Promise<{ page?: string | string[] }> };
@@ -14,7 +14,7 @@ async function getPageData(searchParams: PageProps['searchParams']) {
   const page = raw === undefined ? 1 : Number(raw);
   if (!Number.isSafeInteger(page)) notFound();
   if (raw === '1') permanentRedirect('/media');
-  const allPosts = await getAllPublishedPosts();
+  const allPosts = await getAllMediaPosts();
   const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE));
   if (page > totalPages) notFound();
   return { page, totalPages, posts: allPosts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) };
