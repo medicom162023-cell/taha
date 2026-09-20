@@ -1,3 +1,4 @@
+import { publicWordPressFetch } from '@/lib/public-wordpress-fetch';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { WORDPRESS_BASE_URL } from '@/lib/wordpress';
@@ -18,10 +19,7 @@ export type SeoFallback = {
 const fetchRankMathHead = cache(async (sourceUrl: string): Promise<string | null> => {
   try {
     const endpoint = `${WORDPRESS_BASE_URL}/wp-json/rankmath/v1/getHead?url=${encodeURIComponent(sourceUrl)}`;
-    const response = await fetch(endpoint, {
-      next: { revalidate: 300 },
-      headers: { Accept: 'application/json' },
-    });
+    const response = await publicWordPressFetch(endpoint);
 
     if (!response.ok) return null;
 
