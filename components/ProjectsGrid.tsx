@@ -29,8 +29,13 @@ export default function ProjectsGrid({ projects }: { projects: AardContentItem[]
               />
             ) : null}
             <div className="p-6">
-              <h2 className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#00406d]">
-                {project.title}
+              <h2 className="mb-3 line-clamp-2 text-lg font-bold leading-8">
+                <Link
+                  href={`/projects/${encodeNormalizedSlug(project.slug)}`}
+                  className="text-[#00406d] transition hover:text-[#45bd91] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00406d]"
+                >
+                  {project.title}
+                </Link>
               </h2>
               <p className="mb-5 line-clamp-3 text-sm leading-7 text-slate-600">{project.excerpt}</p>
               <Link
