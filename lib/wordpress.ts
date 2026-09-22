@@ -25,11 +25,17 @@ export interface AardHome {
 }
 interface WordPressPost {
   id: number; slug: string; date: string; modified: string; link: string;
+  featured_media?: number;
   title: { rendered: string }; excerpt: { rendered: string }; content?: { rendered: string };
   _embedded?: {
     'wp:featuredmedia'?: Array<{ source_url?: string }>;
     'wp:term'?: Array<Array<{ id: number; name: string; slug: string }>>;
   };
+}
+
+interface WordPressMedia {
+  id: number;
+  source_url?: string;
 }
 
 async function aardFetch<T>(path: string): Promise<T> {
@@ -48,24 +54,49 @@ function firstContentImage(html = '') {
   return match?.[1]?.replace(/&amp;/g, '&') ?? null;
 }
 
-function mapWordPressPost(post: WordPressPost): AardContentItem {
+function mapWordPressPost(post: WordPressPost, featuredImage?: string): AardContentItem {
   const terms = post._embedded?.['wp:term']?.flat() ?? [];
   return {
     id: post.id, slug: post.slug, title: plainText(post.title.rendered),
     excerpt: plainText(post.excerpt.rendered), content: post.content?.rendered ?? '',
     date: post.date, modified: post.modified, link: post.link,
     featured_image:
+      featuredImage ??
       post._embedded?.['wp:featuredmedia']?.[0]?.source_url ??
       firstContentImage(post.content?.rendered),
     categories: terms.map((term) => ({ id: term.id, name: term.name, slug: term.slug })),
   };
 }
 
+async function mapPostsWithFeaturedImages(posts: WordPressPost[]) {
+  const featuredMediaIds = [...new Set(posts.flatMap((post) =>
+    typeof post.featured_media === 'number' && Number.isSafeInteger(post.featured_media) && post.featured_media > 0
+      ? [post.featured_media]
+      : [],
+  ))];
+  const mediaUrls = new Map<number, string>();
+
+  for (let index = 0; index < featuredMediaIds.length; index += 100) {
+    const params = new URLSearchParams({
+      include: featuredMediaIds.slice(index, index + 100).join(','),
+      per_page: '100',
+      _fields: 'id,source_url',
+    });
+    const response = await publicWordPressFetch(`${WORDPRESS_API_URL}/media?${params}`);
+    if (!response.ok) continue;
+    for (const media of (await response.json()) as WordPressMedia[]) {
+      if (media.source_url) mediaUrls.set(media.id, media.source_url);
+    }
+  }
+
+  return posts.map((post) => mapWordPressPost(post, mediaUrls.get(post.featured_media ?? 0)));
+}
+
 async function fetchCategoryPage(page: number, categoryIds: number[]) {
   const params = new URLSearchParams({
     categories: categoryIds.join(','), per_page: '100', page: String(page),
     orderby: 'date', order: 'desc', _embed: '1',
-    _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
+    _fields: 'id,slug,date,modified,link,title,excerpt,content,featured_media,_embedded',
   });
   const response = await publicWordPressFetch(`${WORDPRESS_API_URL}/posts?${params}`);
   if (!response.ok) throw new Error(`WordPress category request failed: ${response.status}`);
@@ -104,7 +135,7 @@ export async function getProjects(limit = 200) {
     const remaining = await Promise.all(
       Array.from({ length: Math.max(0, first.totalPages - 1) }, (_, index) => fetchCategoryPage(index + 2, PROJECT_CATEGORY_IDS)),
     );
-    return [first, ...remaining].flatMap((result) => result.posts).slice(0, limit).map(mapWordPressPost);
+    return mapPostsWithFeaturedImages([first, ...remaining].flatMap((result) => result.posts).slice(0, limit));
   } catch {
     const data = await aardFetch<AardCollection>(`/projects?per_page=${Math.min(limit, 100)}`);
     return data.items;
@@ -115,7 +146,7 @@ export async function getActivities(limit = 200) {
   const remaining = await Promise.all(
     Array.from({ length: Math.max(0, first.totalPages - 1) }, (_, index) => fetchCategoryPage(index + 2, ACTIVITY_CATEGORY_IDS)),
   );
-  return [first, ...remaining].flatMap((result) => result.posts).slice(0, limit).map(mapWordPressPost);
+  return mapPostsWithFeaturedImages([first, ...remaining].flatMap((result) => result.posts).slice(0, limit));
 }
 export async function getNewsBySlug(slug: string) {
   const normalizedSlug = normalizeSlug(slug);
@@ -152,7 +183,7 @@ export const getAllMediaPosts = cache(async (): Promise<AardContentItem[]> => {
       status: 'publish', per_page: '25', page: String(page),
       categories: MEDIA_CATEGORY_IDS.join(','),
       orderby: 'id', order: 'asc', _embed: '1',
-      _fields: 'id,slug,date,modified,link,title,excerpt,content,_embedded',
+      _fields: 'id,slug,date,modified,link,title,excerpt,content,featured_media,_embedded',
     });
     const response = await publicWordPressFetch(`${WORDPRESS_API_URL}/posts?${params}`);
     if (!response.ok) throw new Error(`WordPress archive request failed: ${response.status}`);
@@ -164,17 +195,18 @@ export const getAllMediaPosts = cache(async (): Promise<AardContentItem[]> => {
   }
 
   const first = await fetchPage(1);
-  const posts = new Map(first.items.map(post => [post.id, mapWordPressPost(post)]));
+  const posts = new Map(first.items.map(post => [post.id, post]));
   // Bound concurrency to avoid flooding WordPress on a cold cache.
   for (let page = 2; page <= first.totalPages; page += 4) {
     const batch = await Promise.all(
       Array.from({ length: Math.min(4, first.totalPages - page + 1) }, (_, i) => fetchPage(page + i)),
     );
     for (const result of batch) {
-      for (const post of result.items) posts.set(post.id, mapWordPressPost(post));
+      for (const post of result.items) posts.set(post.id, post);
     }
   }
-  return [...posts.values()].sort((a, b) =>
+  const items = await mapPostsWithFeaturedImages([...posts.values()]);
+  return items.sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime() || b.id - a.id,
   );
 });
