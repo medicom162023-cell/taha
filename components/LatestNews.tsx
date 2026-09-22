@@ -98,8 +98,13 @@ export default function LatestNews() {
                     })}
                   </time>
 
-                  <h3 className="mb-3 line-clamp-2 text-lg font-bold leading-8 text-[#003358] transition-colors group-hover:text-[#45b287]">
-                    {post.title}
+                  <h3 className="mb-3 line-clamp-2 text-lg font-bold leading-8">
+                    <Link
+                      href={`/media/${encodeNormalizedSlug(post.slug)}`}
+                      className="text-[#003358] transition-colors hover:text-[#45b287] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00406d]"
+                    >
+                      {post.title}
+                    </Link>
                   </h3>
 
                   <p className="mb-5 line-clamp-3 flex-1 text-sm leading-7 text-gray-600">
