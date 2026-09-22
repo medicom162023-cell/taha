@@ -26,7 +26,7 @@ export default function Footer() {
         <div>
           <div className="relative mb-5 h-[72px] w-[154px]">
             <Image
-              src="/white-mark-color-ar-en-h-plus.svg"
+              src="/white-mark-color-ar-en-h-plus.png"
               alt="جمعية التحالف للإغاثة والتنمية"
               fill
               className="object-contain object-right"

@@ -62,7 +62,7 @@ export default function Header() {
         <Link href="/" className="flex shrink-0 items-center" aria-label="الصفحة الرئيسية">
           <div className="relative h-[42px] w-[158px] sm:h-[48px] sm:w-[190px] md:w-[220px]">
             <Image
-              src="/full-logo.svg"
+              src="/full-color-ar-en-h.png"
               alt="جمعية التحالف للإغاثة والتنمية"
               fill
               className="object-contain object-right"
