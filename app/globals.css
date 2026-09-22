@@ -20,6 +20,11 @@
   .form-input {
     @apply min-h-12 w-full rounded-lg border border-[#cedcdf] bg-white px-3.5 py-2.5 text-sm text-[#243b4a] outline-none transition placeholder:text-[#9aa8b0] focus:border-[#51c698] focus:ring-2 focus:ring-[#51c698]/20;
   }
+
+  /* Arabic headlines need additional vertical room for their glyph metrics. */
+  .article-hero-title {
+    @apply text-3xl font-extrabold leading-[1.55] md:text-5xl;
+  }
 }
 
 @layer base {

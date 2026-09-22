@@ -47,7 +47,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <section className="bg-[#00406d] py-14 text-white md:py-20">
           <div className="mx-auto max-w-[980px] px-5 md:px-8">
             <span className="mb-3 block text-sm font-semibold text-[#51c698]">مشاريع الجمعية</span>
-            <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">{project.title}</h1>
+            <h1 className="article-hero-title">{project.title}</h1>
           </div>
         </section>
 
