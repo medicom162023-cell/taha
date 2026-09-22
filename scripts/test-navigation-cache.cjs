@@ -15,40 +15,31 @@ function load(file, dependencies, globals = {}) {
 
 (async () => {
   const entries = new Map();
-  const tasks = [];
   let calls = 0;
   let broken = false;
   let status = 200;
-  const { publicWordPressFetch } = load('lib/public-wordpress-fetch.ts', {
-    '@opennextjs/cloudflare': { getCloudflareContext: () => ({
-      env: { NEWS_CACHE: {
-        get: async key => { if (broken) throw Error('KV unavailable'); return entries.get(key); },
-        put: async (key, value, options) => { assert.equal(options.expirationTtl, 300); entries.set(key, JSON.parse(value)); },
-      } },
-      ctx: { waitUntil: task => tasks.push(task) },
-    }) },
-  }, { fetch: async () => { calls++; return new Response(JSON.stringify({ ok: true }), {
+  const cache = {
+    match: async request => { if (broken) throw Error('Cache unavailable'); return entries.get(request.url)?.clone(); },
+    put: async (request, response) => { if (broken) throw Error('Cache unavailable'); entries.set(request.url, response.clone()); },
+  };
+  const { publicWordPressFetch } = load('lib/public-wordpress-fetch.ts', {}, { caches: { default: cache }, Request, Headers,
+    fetch: async () => { calls++; return new Response(JSON.stringify({ ok: true }), {
     status, headers: { 'content-type': 'application/json', 'x-wp-totalpages': '3' },
   }); } });
   const url = 'https://aard.ps/wp-json/wp/v2/posts?status=publish&page=1';
   await (await publicWordPressFetch(url)).json();
-  await Promise.all(tasks);
   const cached = await publicWordPressFetch(url);
   assert.equal(calls, 1);
   assert.equal(cached.headers.get('x-wp-totalpages'), '3');
   assert.deepEqual(await cached.json(), { ok: true });
   await publicWordPressFetch(url + '&categories=6');
   assert.equal(calls, 2, 'query variants must not share cached data');
-  await Promise.all(tasks);
-  for (const entry of entries.values()) entry.expiresAt = 0;
-  await publicWordPressFetch(url);
-  assert.equal(calls, 3, 'expired entries must refresh');
-  await Promise.all(tasks);
+  assert.equal(entries.get(url).headers.get('cache-control'), 'public, max-age=3600');
   entries.clear(); status = 500;
-  await publicWordPressFetch(url); await Promise.all(tasks);
+  await publicWordPressFetch(url);
   assert.equal(entries.size, 0, 'upstream failures must not be cached');
   broken = true; status = 200;
-  assert.equal((await publicWordPressFetch(url)).status, 200, 'KV failure must fall back to origin');
+  assert.equal((await publicWordPressFetch(url)).status, 200, 'Cache API failure must fall back to origin');
   await assert.rejects(publicWordPressFetch('https://example.com/wp-json/posts'));
 
   let active = 0, peak = 0;
