@@ -1,6 +1,9 @@
 import ProjectsGrid from '@/components/ProjectsGrid';
 import { getProjects } from '@/lib/wordpress';
 
+// Projects originate in WordPress and must be read at request time.
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'المشاريع | جمعية التحالف للإغاثة والتنمية',
   description: 'مشاريع وأنشطة جمعية التحالف للإغاثة والتنمية المنشورة على aard.ps.',
