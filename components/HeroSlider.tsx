@@ -85,17 +85,9 @@ export default function HeroSlider() {
   };
 
   const slideVariants: Variants = {
-    hidden: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
-    visible: {
-      x: '0%',
-      opacity: 1,
-      transition: { x: { duration: 0.45, ease: 'easeOut' }, opacity: { duration: 0.35 } },
-    },
-    exit: (dir: number) => ({
-      x: dir > 0 ? '-100%' : '100%',
-      opacity: 0,
-      transition: { x: { duration: 0.45, ease: 'easeIn' }, opacity: { duration: 0.35 } },
-    }),
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.4 } },
+    exit: { opacity: 0, transition: { duration: 0.4 } },
   };
 
   const containerVariants = {
@@ -114,7 +106,7 @@ export default function HeroSlider() {
   return (
     <section className="relative w-full bg-[#003358] font-[Alexandria]">
       <div className="relative mx-auto flex h-[440px] w-full max-w-[1366px] items-center justify-center overflow-hidden text-center min-[390px]:h-[470px] sm:h-[540px] md:h-[590px] lg:h-[612px]">
-        <AnimatePresence initial={false} mode="popLayout" custom={direction}>
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={current}
             custom={direction}
