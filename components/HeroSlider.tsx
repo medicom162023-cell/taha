@@ -1,21 +1,73 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
-import Image from 'next/image';
+import Image, { getImageProps } from 'next/image';
 import Link from 'next/link';
 import { useHomepageContent } from '@/components/HomepageContentProvider';
+import { heroImageLoader, heroImageSizes } from '@/lib/hero-images';
 
 export default function HeroSlider() {
   const { hero } = useHomepageContent();
   const slides = hero.slides;
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const imageRequests = useRef(new Map<string, Promise<boolean>>());
+  const navigationRequest = useRef(0);
+
+  const prepareImage = useCallback((src: string) => {
+    const { props } = getImageProps({
+      src, alt: '', fill: true, loader: heroImageLoader, sizes: heroImageSizes,
+    });
+    // Include the viewport in the key so a resize can prepare a new candidate.
+    const key = `${src}:${window.innerWidth}:${window.devicePixelRatio}`;
+    const existing = imageRequests.current.get(key);
+    if (existing) return existing;
+    const request = new Promise<boolean>((resolve) => {
+      const image = new window.Image();
+      let finished = false;
+      const finish = (ready: boolean) => {
+        if (finished) return;
+        finished = true;
+        window.clearTimeout(timeout);
+        image.onload = null;
+        image.onerror = null;
+        if (!ready) imageRequests.current.delete(key);
+        resolve(ready);
+      };
+      const timeout = window.setTimeout(() => finish(false), 12000);
+      image.onload = () => {
+        if (image.decode) image.decode().then(() => finish(true), () => finish(true));
+        else finish(true);
+      };
+      image.onerror = () => finish(false);
+      image.fetchPriority = 'low';
+      image.sizes = props.sizes || heroImageSizes;
+      image.srcset = props.srcSet || '';
+      image.src = props.src;
+    });
+    imageRequests.current.set(key, request);
+    return request;
+  }, []);
+
+  const showSlide = useCallback(async (index: number, nextDirection: number) => {
+    const slide = slides[index];
+    if (!slide) return;
+    const request = ++navigationRequest.current;
+    const ready = await prepareImage(slide.image);
+    if (!ready || request !== navigationRequest.current) return;
+    setDirection(nextDirection);
+    setCurrent(index);
+  }, [prepareImage, slides]);
 
   const nextSlide = useCallback(() => {
-    setDirection(1);
-    setCurrent((prev) => (prev + 1) % Math.max(slides.length, 1));
-  }, [slides.length]);
+    if (slides.length > 1) void showSlide((current + 1) % slides.length, 1);
+  }, [current, slides.length, showSlide]);
+
+  useEffect(() => {
+    if (slides.length > 1) void prepareImage(slides[(current + 1) % slides.length].image);
+    return () => { navigationRequest.current += 1; };
+  }, [current, prepareImage, slides]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -25,9 +77,11 @@ export default function HeroSlider() {
   }, [nextSlide]);
 
   const handleDotClick = (index: number) => {
-    if (index === current) return;
-    setDirection(index > current ? 1 : -1);
-    setCurrent(index);
+    if (index === current) {
+      navigationRequest.current += 1;
+      return;
+    }
+    void showSlide(index, index > current ? 1 : -1);
   };
 
   const slideVariants: Variants = {
@@ -60,7 +114,7 @@ export default function HeroSlider() {
   return (
     <section className="relative w-full bg-[#003358] font-[Alexandria]">
       <div className="relative mx-auto flex h-[440px] w-full max-w-[1366px] items-center justify-center overflow-hidden text-center min-[390px]:h-[470px] sm:h-[540px] md:h-[590px] lg:h-[612px]">
-        <AnimatePresence mode="popLayout" custom={direction}>
+        <AnimatePresence initial={false} mode="popLayout" custom={direction}>
           <motion.div
             key={current}
             custom={direction}
@@ -75,8 +129,10 @@ export default function HeroSlider() {
                 src={slide.image}
                 alt={slide.title}
                 fill
-                priority={current === 0}
-                sizes="100vw"
+                loader={heroImageLoader}
+                preload={current === 0}
+                loading={current === 0 ? undefined : 'eager'}
+                sizes={heroImageSizes}
                 className="object-cover object-center"
               />
             </div>
@@ -98,13 +154,14 @@ export default function HeroSlider() {
                     current === index ? 'h-[11px] w-[11px] bg-[#51c698]' : 'h-[8px] w-[8px] bg-white/45 hover:bg-white'
                   }`}
                   aria-label={`الانتقال إلى الشريحة ${index + 1}`}
+                  aria-current={current === index ? 'true' : undefined}
                 />
               ))}
             </div>
 
             <motion.div
               variants={containerVariants}
-              initial="hidden"
+              initial={false}
               animate="visible"
               className="relative z-20 flex w-full max-w-[760px] flex-col items-center pb-7 sm:pb-0"
             >
