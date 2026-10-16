@@ -63,7 +63,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
                 className="mb-10 max-h-[520px] w-full rounded-2xl object-cover"
               />
             ) : null}
-            <WpContent html={post.content} />
+            <WpContent html={post.content} postSlug={post.slug} />
           </div>
         </article>
       </main>
